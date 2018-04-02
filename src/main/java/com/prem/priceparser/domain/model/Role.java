@@ -11,10 +11,13 @@ import java.util.Collection;
 
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "roles")
 public class Role implements GrantedAuthority {
+
+    public Role(RoleEnum role) {
+        this.role = role;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

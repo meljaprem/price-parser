@@ -11,7 +11,6 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @ToString
-@AllArgsConstructor
 @Data
 @Entity
 @NoArgsConstructor
@@ -20,7 +19,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String username;
     @Column(nullable = false)
     private String password;
@@ -31,13 +30,13 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String email;
     @Column(nullable = false)
-    private boolean accountNonExpired;
+    private boolean accountNonExpired = true;
     @Column(nullable = false)
-    private boolean accountNonLocked;
+    private boolean accountNonLocked = true;
     @Column(nullable = false)
-    private boolean credentialsNonExpired;
+    private boolean credentialsNonExpired = true;
     @Column(nullable = false)
-    private boolean enabled;
+    private boolean enabled = true;
 
     @ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
