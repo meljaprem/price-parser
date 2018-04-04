@@ -27,17 +27,7 @@ public class UserService {
     }
 
     public User createUser(String name, String surname, String email, String username, String pass){
-        User user = User.builder()
-                .name(name)
-                .surname(surname)
-                .email(email)
-                .username(username)
-                .password(passwordEncoder.encode(pass))
-                .accountNonExpired(true)
-                .accountNonLocked(true)
-                .enabled(true)
-                .credentialsNonExpired(true)
-                .build();
+        User user = getFilledUser(name, surname, email, username, pass);
         return createUser(user);
     }
 
@@ -45,12 +35,17 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User createAdmin(User user){
-        user.getAuthorities().add(new Role(RoleEnum.ADMIN));
-        return userRepository.save(user);
+    public User createAdmin(User adminUser){
+        adminUser.getAuthorities().add(new Role(RoleEnum.ADMIN));
+        return userRepository.save(adminUser);
     }
 
     public User createAdmin(String name, String surname, String email, String username, String pass){
+        User adminUser = getFilledUser(name, surname, email, username, pass);
+        return createAdmin(adminUser);
+    }
+
+    private User getFilledUser(String name, String surname, String email, String username, String pass) {
         User user = User.builder()
                 .name(name)
                 .surname(surname)
@@ -62,6 +57,8 @@ public class UserService {
                 .enabled(true)
                 .credentialsNonExpired(true)
                 .build();
-        return createAdmin(user);
+        user.getAuthorities().add(new Role(RoleEnum.USER));
+        return user;
     }
+
 }

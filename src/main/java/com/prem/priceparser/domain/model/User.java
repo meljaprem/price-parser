@@ -51,7 +51,6 @@ public class User implements UserDetails {
     public Collection<Role> getAuthorities() {
         if(authorities==null){
             authorities = new ArrayList<>();
-            ((List<Role>) authorities).add(new Role(RoleEnum.USER));
         }
         return authorities;
     }
