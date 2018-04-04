@@ -1,16 +1,16 @@
 package com.prem.priceparser.domain.model;
 
 import com.prem.priceparser.domain.enums.RoleEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString(exclude = "users")
 @NoArgsConstructor
 @Table(name = "roles")
 public class Role implements GrantedAuthority {

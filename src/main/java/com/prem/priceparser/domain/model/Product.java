@@ -23,5 +23,5 @@ public class Product {
     @Column
     private String name;
     @Column
-    private String expectedPrice;
+    private Double expectedPrice;
 }

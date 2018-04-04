@@ -4,7 +4,6 @@ import com.prem.priceparser.repository.UserRepository;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,7 +26,9 @@ public class UserSecurityService implements UserDetailsService {
         log.trace("Trying to login with username {}", username);
         UserDetails user = userRepository.findByUsername(username.toLowerCase());
         if (user == null) {
-            log.error("LogIn failed, user with username {} not found", username);
+            log.debug("LogIn failed, user with username '{}' not found", username);
+        } else {
+            log.debug("User found: {}", user);
         }
         return user;
     }

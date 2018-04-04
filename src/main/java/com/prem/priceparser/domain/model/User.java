@@ -1,19 +1,21 @@
 package com.prem.priceparser.domain.model;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.prem.priceparser.domain.enums.RoleEnum;
+import lombok.*;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @ToString
 @Data
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "users")
 public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,4 +47,12 @@ public class User implements UserDetails {
             inverseJoinColumns = { @JoinColumn(name = "role") }
     )
     private Collection<Role> authorities;
+
+    public Collection<Role> getAuthorities() {
+        if(authorities==null){
+            authorities = new ArrayList<>();
+            ((List<Role>) authorities).add(new Role(RoleEnum.USER));
+        }
+        return authorities;
+    }
 }
