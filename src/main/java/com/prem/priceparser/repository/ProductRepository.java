@@ -10,5 +10,4 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
 
     List<Product> findAllByUser(Long userId);
 
-
 }

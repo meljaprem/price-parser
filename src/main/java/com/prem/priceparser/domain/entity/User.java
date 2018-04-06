@@ -48,6 +48,14 @@ public class User implements UserDetails {
     )
     private Collection<Role> authorities;
 
+    public User(String name, String surname, String email, String username,  String password) {
+        this.username = username;
+        this.password = password;
+        this.surname = surname;
+        this.name = name;
+        this.email = email;
+    }
+
     public Collection<Role> getAuthorities() {
         if (authorities == null) {
             authorities = new ArrayList<>();

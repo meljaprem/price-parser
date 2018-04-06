@@ -40,10 +40,24 @@ public class Product {
     @Column(name = "code")
     private Map<ShopName, String> codesMap;
 
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "shops_prices")
+    @MapKeyColumn(name = "shop_name")
+    @MapKeyEnumerated(value = EnumType.STRING)
+    @Column(name = "price")
+    private Map<ShopName, Float> shopsPrices;
+
     public Map<ShopName, String> getCodesMap() {
         if (codesMap == null) {
             codesMap = new HashMap<>();
         }
         return codesMap;
+    }
+
+    public Map<ShopName, Float> getShopsPrices() {
+        if (shopsPrices == null) {
+            shopsPrices = new HashMap<>();
+        }
+        return shopsPrices;
     }
 }
