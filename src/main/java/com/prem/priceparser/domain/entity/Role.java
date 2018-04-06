@@ -1,7 +1,10 @@
-package com.prem.priceparser.domain.model;
+package com.prem.priceparser.domain.entity;
 
 import com.prem.priceparser.domain.enums.RoleEnum;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -26,10 +29,10 @@ public class Role implements GrantedAuthority {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false,
             length = 5
-            )
+    )
     private RoleEnum role = RoleEnum.USER;
 
-    @ManyToMany(mappedBy = "authorities")
+    @ManyToMany(mappedBy = "authorities", fetch = FetchType.LAZY)
     private Collection<User> users;
 
 

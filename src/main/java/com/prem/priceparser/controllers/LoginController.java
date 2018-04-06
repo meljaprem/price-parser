@@ -26,12 +26,12 @@ public class LoginController {
             @RequestParam(required = false) String error,
             @RequestParam(required = false) String logout,
             ModelAndView modelAndView) {
-        log.info("Error message: {}, Logout message: {}", error_message, logout_message);
         if (error != null) {
             modelAndView.addObject("error", error_message);
         } else if (logout != null) {
             modelAndView.addObject("logout", logout_message);
         }
+        modelAndView.setViewName("login");
         return modelAndView;
     }
 }

@@ -26,7 +26,7 @@ public class UserSecurityService implements UserDetailsService {
         log.trace("Trying to login with username {}", username);
         UserDetails user = userRepository.findByUsername(username.toLowerCase());
         if (user == null) {
-            log.debug("LogIn failed, user with username '{}' not found", username);
+            throw new UsernameNotFoundException("LogIn failed, user with username '" + username + "' not found");
         } else {
             log.debug("User found: {}", user);
         }

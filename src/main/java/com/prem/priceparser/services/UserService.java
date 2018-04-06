@@ -2,8 +2,8 @@ package com.prem.priceparser.services;
 
 
 import com.prem.priceparser.domain.enums.RoleEnum;
-import com.prem.priceparser.domain.model.Role;
-import com.prem.priceparser.domain.model.User;
+import com.prem.priceparser.domain.entity.Role;
+import com.prem.priceparser.domain.entity.User;
 import com.prem.priceparser.repository.UserRepository;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,21 +26,21 @@ public class UserService {
         passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public User createUser(String name, String surname, String email, String username, String pass){
+    public User createUser(String name, String surname, String email, String username, String pass) {
         User user = getFilledUser(name, surname, email, username, pass);
         return createUser(user);
     }
 
-    public User createUser(User user){
+    public User createUser(User user) {
         return userRepository.save(user);
     }
 
-    public User createAdmin(User adminUser){
+    public User createAdmin(User adminUser) {
         adminUser.getAuthorities().add(new Role(RoleEnum.ADMIN));
         return userRepository.save(adminUser);
     }
 
-    public User createAdmin(String name, String surname, String email, String username, String pass){
+    public User createAdmin(String name, String surname, String email, String username, String pass) {
         User adminUser = getFilledUser(name, surname, email, username, pass);
         return createAdmin(adminUser);
     }

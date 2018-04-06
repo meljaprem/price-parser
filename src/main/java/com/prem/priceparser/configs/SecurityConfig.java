@@ -3,6 +3,7 @@ package com.prem.priceparser.configs;
 
 import com.prem.priceparser.services.UserSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,10 +35,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     @Autowired
-    protected void configure(AuthenticationManagerBuilder auth, UserSecurityService userSecurityService) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth,
+                             UserSecurityService userSecurityService,
+                             BCryptPasswordEncoder encoder) throws Exception {
         auth
                 .userDetailsService(userSecurityService)
-                .passwordEncoder(new BCryptPasswordEncoder());
+                .passwordEncoder(encoder);
+    }
+
+    @Bean
+    public BCryptPasswordEncoder getBCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 

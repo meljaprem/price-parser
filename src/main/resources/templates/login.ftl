@@ -2,6 +2,12 @@
 <head></head>
 <body>
 <h1>Login</h1>
+<#if error??>
+    <span style="color:Red">${error}</span>
+</#if>
+<#if logout??>
+    <span style="color:blue">${logout}</span>
+</#if>
 <form name='f' action="login" method='POST'>
     <table>
         <tr>
