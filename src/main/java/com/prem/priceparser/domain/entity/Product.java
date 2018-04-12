@@ -1,6 +1,9 @@
 package com.prem.priceparser.domain.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.prem.priceparser.domain.enums.ShopName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,16 +25,15 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.LAZY,
                 targetEntity = User.class)
-    private Long user;
-
-    @Column
-    private Double price;
+    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+    @JsonIdentityReference(alwaysAsId=true) // otherwise first ref as POJO, others as id
+    private User user;
 
     @Column
     private String name;
 
     @Column
-    private Double expectedPrice;
+    private Float expectedPrice;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "product_codes")
@@ -47,6 +49,7 @@ public class Product {
     @Column(name = "price")
     private Map<ShopName, Float> shopsPrices;
 
+
     public Map<ShopName, String> getCodesMap() {
         if (codesMap == null) {
             codesMap = new HashMap<>();
@@ -59,5 +62,11 @@ public class Product {
             shopsPrices = new HashMap<>();
         }
         return shopsPrices;
+    }
+
+    public Product(User user, String name, Float expectedPrice) {
+        this.user = user;
+        this.name = name;
+        this.expectedPrice = expectedPrice;
     }
 }

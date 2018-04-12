@@ -1,6 +1,7 @@
 package com.prem.priceparser.domain.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -40,6 +41,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private boolean enabled = true;
 
+    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_roles",

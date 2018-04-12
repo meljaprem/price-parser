@@ -1,7 +1,9 @@
 package com.prem.priceparser.services;
 
 import com.prem.priceparser.domain.entity.Product;
+import com.prem.priceparser.domain.entity.User;
 import com.prem.priceparser.repository.ProductRepository;
+import com.prem.priceparser.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,9 +35,10 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    public void deleteProduct(Long productId){
+    public void deleteProduct(Long productId, User user){
         log.debug("Deleting product with id <{}>", productId);
-        productRepository.deleteById(productId);
+        Optional<Product> productOptional = productRepository.findByIdAndUser(productId, user);
+        productOptional.ifPresent(product -> productRepository.deleteById(productId));
     }
 
     public void updateProduct(Product product){
@@ -49,10 +52,18 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
-    public List<Product> getAllByUserId(Long userId){
-        log.debug("Getting products of user with id {}", userId);
-        List<Product> products = productRepository.findAllByUser(userId);
-        log.debug("Found {} product of user with id {}", products.size(), userId);
+    public List<Product> getAllByUser(User user){
+        log.debug("Getting products of user with id {}", user.getId());
+        List<Product> products = productRepository.findAllByUser(user);
+        log.debug("Found {} products of user with id {}", products.size(), user.getId());
+        log.trace("Products: {}", products);
+        return products;
+    }
+
+    public List<Product> getAll(){
+        log.debug("Getting all products");
+        List<Product> products = (List<Product>) productRepository.findAll();
+        log.debug("Found {} products", products.size());
         log.trace("Products: {}", products);
         return products;
     }

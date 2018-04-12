@@ -1,5 +1,6 @@
 package com.prem.priceparser.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.prem.priceparser.domain.enums.RoleEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,7 +32,7 @@ public class Role implements GrantedAuthority {
             length = 5
     )
     private RoleEnum role = RoleEnum.USER;
-
+    @JsonIgnore
     @ManyToMany(mappedBy = "authorities", fetch = FetchType.LAZY)
     private Collection<User> users;
 

@@ -1,19 +1,15 @@
 package com.prem.priceparser.services;
 
 
-import com.prem.priceparser.domain.enums.RoleEnum;
 import com.prem.priceparser.domain.entity.Role;
 import com.prem.priceparser.domain.entity.User;
+import com.prem.priceparser.domain.enums.RoleEnum;
 import com.prem.priceparser.repository.UserRepository;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +44,10 @@ public class UserService {
 
     public Optional<User> getUserById(Long userId){
         return userRepository.findById(userId);
+    }
+
+    public User getUserByUsername(String username){
+        return userRepository.findByUsername(username);
     }
 
     private void setAccountSetting(User user, RoleEnum... roles) {
