@@ -25,7 +25,7 @@ public class ProductController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable() Long productId) {
+    public ResponseEntity<Product> getProductById(@PathVariable(name = "id") Long productId) {
         Optional<Product> productOptional = productService.getProductById(productId);
         return productOptional
                 .map(product -> new ResponseEntity<>(product, HttpStatus.OK))
@@ -48,18 +48,26 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
+    @PostMapping
+    public ResponseEntity<Product> createProduct(@ModelAttribute(name = "product") Product product,
+                                                 Authentication authentication) {
+        //TODO refactor it after testing
+        User user = getUser(authentication);
+        product = productService.createProduct(product, user);
+        return new ResponseEntity<>(product, HttpStatus.OK);
+    }
+
     @DeleteMapping
-    public ResponseEntity<?> deleteProduct(@RequestParam(required = true) Long productId,
+    public ResponseEntity<?> deleteProduct(@RequestParam(required = true, name = "id") Long productId,
                                            Authentication authentication) {
         User user = getUser(authentication);
         productService.deleteProduct(productId, user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
     private User getUser(Authentication authentication) {
         User user;
-        if(authentication != null){
+        if (authentication != null) {
             user = (User) authentication.getPrincipal();
             log.debug("authentication is not null, user = {}", user);
         } else {

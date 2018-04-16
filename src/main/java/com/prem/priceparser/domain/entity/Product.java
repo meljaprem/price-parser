@@ -24,12 +24,13 @@ public class Product {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY,
-                targetEntity = User.class)
+                targetEntity = User.class,
+                optional = false)
     @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
     @JsonIdentityReference(alwaysAsId=true) // otherwise first ref as POJO, others as id
     private User user;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
     @Column
