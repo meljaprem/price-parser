@@ -40,7 +40,7 @@ public class ProductController {
 
     @PutMapping
     public ResponseEntity<Product> createProduct(@RequestParam(required = true) String name,
-                                                 @RequestParam(required = false) Float expectedPrice,
+                                                 @RequestParam(required = false) Double expectedPrice,
                                                  Authentication authentication) {
         //TODO refactor it after testing
         User user = getUser(authentication);

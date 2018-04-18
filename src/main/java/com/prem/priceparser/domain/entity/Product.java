@@ -34,7 +34,7 @@ public class Product {
     private String name;
 
     @Column
-    private Float expectedPrice;
+    private Double expectedPrice;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "product_codes")
@@ -48,7 +48,7 @@ public class Product {
     @MapKeyColumn(name = "shop_name")
     @MapKeyEnumerated(value = EnumType.STRING)
     @Column(name = "price")
-    private Map<ShopName, Float> shopsPrices;
+    private Map<ShopName, Double> shopsPrices;
 
 
     public Map<ShopName, String> getCodesMap() {
@@ -58,14 +58,14 @@ public class Product {
         return codesMap;
     }
 
-    public Map<ShopName, Float> getShopsPrices() {
+    public Map<ShopName, Double> getShopsPrices() {
         if (shopsPrices == null) {
             shopsPrices = new HashMap<>();
         }
         return shopsPrices;
     }
 
-    public Product(User user, String name, Float expectedPrice) {
+    public Product(User user, String name, Double expectedPrice) {
         this.user = user;
         this.name = name;
         this.expectedPrice = expectedPrice;
