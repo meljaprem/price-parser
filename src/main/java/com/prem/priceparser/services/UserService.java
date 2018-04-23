@@ -34,6 +34,7 @@ public class UserService {
         log.debug("Creating user: {} with roles: {}", user, roles);
         normalizeUserFields(user);
         setAccountSetting(user, roles);
+        log.trace("Trying to save user: {}: ", user);
         userRepository.save(user);
         log.debug("User created: {}", user);
         return user;

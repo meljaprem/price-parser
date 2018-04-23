@@ -22,9 +22,8 @@ public class Role implements GrantedAuthority {
     public Role(RoleEnum role) {
         this.role = role;
     }
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     @Enumerated(EnumType.STRING)
