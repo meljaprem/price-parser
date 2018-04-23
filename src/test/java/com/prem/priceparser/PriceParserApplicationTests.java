@@ -27,7 +27,7 @@ public class PriceParserApplicationTests {
          User user = new User("name",
                         "Surname",
                         "Email@email.ua",
-                        "admin",
+                        "admin2",
                         "admin");
          userService.createUser(user,RoleEnum.USER, RoleEnum.ADMIN);
          log.info("User with id {} created \n {}", user.getId(), user);

@@ -29,7 +29,9 @@ public class Role implements GrantedAuthority {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false,
-            length = 5
+            length = 5,
+            unique = true
+
     )
     private RoleEnum role = RoleEnum.USER;
     @JsonIgnore

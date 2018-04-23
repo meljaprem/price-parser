@@ -1,9 +1,9 @@
 package com.prem.priceparser.services;
 
 
-import com.prem.priceparser.domain.entity.Role;
 import com.prem.priceparser.domain.entity.User;
 import com.prem.priceparser.domain.enums.RoleEnum;
+import com.prem.priceparser.repository.RoleRepository;
 import com.prem.priceparser.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +19,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     public User createUser(User user) {
         return createUser(user, RoleEnum.USER);
@@ -52,7 +53,7 @@ public class UserService {
 
     private void setAccountSetting(User user, RoleEnum... roles) {
         for (RoleEnum role : roles) {
-            user.getAuthorities().add(new Role(role));
+            user.getAuthorities().add(roleRepository.findByRole(role));
         }
         user.setAccountNonExpired(true);
         user.setAccountNonLocked(true);

@@ -1,8 +1,11 @@
 package com.prem.priceparser.controllers.rest;
 
 
+import com.prem.priceparser.domain.dto.ProductDto;
 import com.prem.priceparser.domain.entity.Product;
 import com.prem.priceparser.domain.entity.User;
+import com.prem.priceparser.domain.enums.RoleEnum;
+import com.prem.priceparser.mappers.ProductMapper;
 import com.prem.priceparser.services.ProductService;
 import com.prem.priceparser.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final UserService userService;
+    private final ProductMapper productMapper;
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable(name = "id") Long productId) {
@@ -32,8 +36,18 @@ public class ProductController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<?> getAllProducts(Authentication authentication) {
+        User user = getUser(authentication);
+        if (user.getAuthorities().contains(RoleEnum.ADMIN)) {
+            return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllProductsOfUser(Authentication authentication) {
         List<Product> products = productService.getAll();
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
@@ -49,12 +63,12 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@ModelAttribute(name = "product") Product product,
-                                                 Authentication authentication) {
+    public ResponseEntity<ProductDto> updateProduct(ProductDto productDto,
+                                                    Authentication authentication) {
         //TODO refactor it after testing
         User user = getUser(authentication);
-        product = productService.createProduct(product, user);
-        return new ResponseEntity<>(product, HttpStatus.OK);
+        Product product = productService.createProduct(productMapper.convertFromDto(productDto), user);
+        return new ResponseEntity<>(productMapper.convertToDto(product), HttpStatus.OK);
     }
 
     @DeleteMapping
