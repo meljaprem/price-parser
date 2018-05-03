@@ -1,7 +1,6 @@
 package com.prem.priceparser.domain.enums;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public enum RoleEnum {

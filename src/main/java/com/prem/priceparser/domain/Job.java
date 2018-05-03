@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Job {
-    private Long product_id;
+    private Long productId;
     private ShopName shop;
     private String code;
 }

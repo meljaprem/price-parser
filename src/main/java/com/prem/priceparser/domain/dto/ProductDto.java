@@ -2,7 +2,10 @@ package com.prem.priceparser.domain.dto;
 
 
 import com.prem.priceparser.domain.enums.ShopName;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
