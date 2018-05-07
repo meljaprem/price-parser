@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Getter
 @Setter
 @Slf4j
-@PropertySource("checkers.properties")
+@PropertySource("classpath:checkers.properties")
 @Profile("prod")
 public class RozetkaPriceChecker extends PriceChecker {
 

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Job {
+public class Job  {
     private Long productId;
     private ShopName shop;
     private String code;

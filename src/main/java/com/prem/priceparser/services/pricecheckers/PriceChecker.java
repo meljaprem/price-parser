@@ -29,6 +29,7 @@ public abstract class PriceChecker {
 
     public Double getPrice(String productId) throws IOException {
         if (productId == null) throw new IllegalArgumentException("productId is null");
+        log.debug("Start checking price");
         Document document = getDocument(productId);
         return parseDocument(document);
     }
