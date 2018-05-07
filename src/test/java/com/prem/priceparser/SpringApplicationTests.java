@@ -51,7 +51,7 @@ public class SpringApplicationTests {
 
     @Test
     public void priceCheckerTest() throws IOException {
-log.info("Price is : {}", priceChecker.getPrice("5563017"));
+    log.info("Price is : {}", priceChecker.getPrice("5563017"));
     }
 
 

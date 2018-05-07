@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 @Setter
 @Slf4j
 @PropertySource("checkers.properties")
+@Profile("prod")
 public class RozetkaPriceChecker extends PriceChecker {
 
     private final static String SHOP_ADDRESS = "https://rozetka.com.ua/offer/";
