@@ -1,6 +1,7 @@
 package com.prem.priceparser.rabbitmq.senders;
 
 import com.prem.priceparser.configs.RabbitMQConfig;
+import com.prem.priceparser.domain.JobResult;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +13,15 @@ import org.springframework.stereotype.Service;
 @Setter
 @Slf4j
 @Service("outboundRabbitMqSender")
-public class OutboundRabbitMqSender extends RabbitMqSender {
+public class OutboundRabbitMqSender extends RabbitMqSender<JobResult> {
     public OutboundRabbitMqSender(RabbitTemplate rabbitTemplate, RabbitMQConfig rabbitMQConfig, Jackson2JsonMessageConverter converter) {
         super(rabbitTemplate, rabbitMQConfig, converter);
+    }
+
+    @Override
+    public void sendMessageToQueue(JobResult result) {
+        log.debug("Sending object: {} to exchange: {} ", result, getExchange() );
+        rabbitTemplate.convertAndSend(getExchange(), rabbitMQConfig.getOutboundResultsQueueName(), result);
     }
 
     @Override

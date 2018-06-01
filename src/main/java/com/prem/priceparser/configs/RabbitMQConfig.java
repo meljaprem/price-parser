@@ -3,10 +3,7 @@ package com.prem.priceparser.configs;
 import com.prem.priceparser.domain.enums.ShopName;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.HeadersExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,10 +26,8 @@ public class RabbitMQConfig {
 
     @Value("${outbound.exchange}")
     private String outboundExchangeName;
-    @Value("${outbound.queue.rozetka}")
-    private String outboundRozetkaQueueName;
-    @Value("${outbound.queue.comfy}")
-    private String outboundComfyQueueName;
+    @Value("${outbound.queue.results}")
+    private String outboundResultsQueueName;
 
     @Bean(name = "inboundRozetkaQueue")
     public Queue inboundRozetkaQueue() {
@@ -44,14 +39,9 @@ public class RabbitMQConfig {
         return new Queue(inboundComfyQueueName);
     }
 
-    @Bean(name = "outboundRozetkaQueue")
-    public Queue outboundRozetkaQueue() {
-        return new Queue(outboundRozetkaQueueName);
-    }
-
-    @Bean(name = "outboundComfyQueue")
-    public Queue outboundComfyQueue() {
-        return new Queue(outboundComfyQueueName);
+    @Bean(name = "outboundResultsQueue")
+    public Queue outboundResultsQueue() {
+        return new Queue(outboundResultsQueueName);
     }
 
 
@@ -61,29 +51,16 @@ public class RabbitMQConfig {
     }
 
     @Bean(name = "outboundExchange")
-    HeadersExchange outboundExchange() {
-        return new HeadersExchange(outboundExchangeName);
+    DirectExchange outboundExchange() {
+        return new DirectExchange(outboundExchangeName);
     }
 
-    @Bean("outboundRozetkaRouting")
-    Binding bindOutboundRozetka(@Qualifier("outboundRozetkaQueue") Queue queue,
-                                @Qualifier("outboundExchange") HeadersExchange exchange) {
-
-        return BindingBuilder.bind(queue).to(exchange).where("shop").matches(ShopName.ROZETKA.name());
-    }
 
     @Bean("inboundRozetkaRouting")
     Binding bindOutboundComfy(@Qualifier("inboundRozetkaQueue") Queue queue,
                               @Qualifier("inboundExchange") HeadersExchange exchange) {
 
         return BindingBuilder.bind(queue).to(exchange).where("shop").matches(ShopName.ROZETKA.name());
-    }
-
-    @Bean("outboundComfyRouting")
-    Binding bindInboundComfy(@Qualifier("outboundComfyQueue") Queue queue,
-                             @Qualifier("outboundExchange") HeadersExchange exchange) {
-
-        return BindingBuilder.bind(queue).to(exchange).where("shop").matches(ShopName.COMFY.name());
     }
 
     @Bean("inboundComfyRouting")
@@ -93,10 +70,14 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(queue).to(exchange).where("shop").matches(ShopName.COMFY.name());
     }
 
+    @Bean("outboundResultsRouting")
+    Binding bindInboundComfy(@Qualifier("outboundResultsQueue") Queue queue,
+                             @Qualifier("outboundExchange") DirectExchange exchange) {
+
+        return BindingBuilder.bind(queue).to(exchange).withQueueName();
+    }
     @Bean
     public Jackson2JsonMessageConverter getConverter(){
        return new Jackson2JsonMessageConverter();
     }
-
-
 }
