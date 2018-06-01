@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,7 @@ public class UserService {
         return createUser(user, RoleEnum.USER);
     }
 
+    @Transactional
     public User createUser(User user, RoleEnum ... roles) {
         log.debug("Creating user: {} with roles: {}", user, roles);
         normalizeUserFields(user);
@@ -40,14 +42,17 @@ public class UserService {
         return user;
     }
 
+    @Transactional(readOnly = true)
     public List<User> getAllUsers(){
         return (List<User>) userRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Optional<User> getUserById(Long userId){
         return userRepository.findById(userId);
     }
 
+    @Transactional(readOnly = true)
     public User getUserByUsername(String username){
         return userRepository.findByUsername(username);
     }

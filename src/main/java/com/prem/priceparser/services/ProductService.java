@@ -7,6 +7,7 @@ import com.prem.priceparser.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,7 @@ import java.util.Optional;
 public class ProductService {
     private final ProductRepository productRepository;
 
+    @Transactional
     public Product createProduct(Product product) {
         log.debug("Creating product: {}", product);
         productRepository.save(product);
@@ -32,15 +34,17 @@ public class ProductService {
 
 
     public Product createProduct(Product product, User user) {
-       product.setUser(user);
-       return createProduct(product);
+        product.setUser(user);
+        return createProduct(product);
     }
 
+    @Transactional
     public void deleteProduct(Product product) {
         log.debug("Deleting product with id <{}>", product.getId());
         productRepository.delete(product);
     }
 
+    @Transactional
     public void deleteProduct(Long productId, User user) {
         log.debug("Deleting product with id <{}>", productId);
         Optional<Product> productOptional = productRepository.findByIdAndUser(productId, user);
@@ -52,17 +56,20 @@ public class ProductService {
         }
     }
 
+    @Transactional
     public void updateProduct(Product product) {
         log.debug("Updating product with id <{}>", product.getId());
         productRepository.save(product);
         log.debug("Product with id {} was updated", product.getId());
     }
 
+    @Transactional(readOnly = true)
     public Optional<Product> getProductById(Long id) {
         log.debug("Searching product with id <{}>", id);
         return productRepository.findById(id);
     }
 
+    @Transactional(readOnly = true)
     public List<Product> getAllByUser(User user) {
         log.debug("Getting products of user with id {}", user.getId());
         List<Product> products = productRepository.findAllByUser(user);
@@ -71,6 +78,7 @@ public class ProductService {
         return products;
     }
 
+    @Transactional(readOnly = true)
     public List<Product> getAll() {
         log.debug("Getting all products");
         List<Product> products = (List<Product>) productRepository.findAll();
