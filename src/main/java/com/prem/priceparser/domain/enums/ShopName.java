@@ -4,5 +4,6 @@ public enum ShopName {
     ROZETKA,
     ALLO,
     CITRUS,
-    STYLUS
+    STYLUS,
+    COMFY
 }

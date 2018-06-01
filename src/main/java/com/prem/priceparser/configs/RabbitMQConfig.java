@@ -1,11 +1,13 @@
 package com.prem.priceparser.configs;
 
+import com.prem.priceparser.domain.enums.ShopName;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.HeadersExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -32,12 +34,6 @@ public class RabbitMQConfig {
     @Value("${outbound.queue.comfy}")
     private String outboundComfyQueueName;
 
-    @Value("${routing.comfy}")
-    private String comfyRouting;
-    @Value("${routing.rozetka}")
-    private String rozetkaRouting;
-
-
     @Bean(name = "inboundRozetkaQueue")
     public Queue inboundRozetkaQueue() {
         return new Queue(inboundRozetkaQueueName);
@@ -60,41 +56,46 @@ public class RabbitMQConfig {
 
 
     @Bean(name = "inboundExchange")
-    TopicExchange inboundExchange() {
-        return new TopicExchange(inboundExchangeName);
+    HeadersExchange inboundExchange() {
+        return new HeadersExchange(inboundExchangeName);
     }
 
     @Bean(name = "outboundExchange")
-    TopicExchange outboundExchange() {
-        return new TopicExchange(outboundExchangeName);
+    HeadersExchange outboundExchange() {
+        return new HeadersExchange(outboundExchangeName);
     }
 
     @Bean("outboundRozetkaRouting")
     Binding bindOutboundRozetka(@Qualifier("outboundRozetkaQueue") Queue queue,
-                                @Qualifier("outboundExchange") TopicExchange exchange) {
+                                @Qualifier("outboundExchange") HeadersExchange exchange) {
 
-        return BindingBuilder.bind(queue).to(exchange).with(rozetkaRouting);
+        return BindingBuilder.bind(queue).to(exchange).where("shop").matches(ShopName.ROZETKA.name());
     }
 
     @Bean("inboundRozetkaRouting")
     Binding bindOutboundComfy(@Qualifier("inboundRozetkaQueue") Queue queue,
-                              @Qualifier("inboundExchange") TopicExchange exchange) {
+                              @Qualifier("inboundExchange") HeadersExchange exchange) {
 
-        return BindingBuilder.bind(queue).to(exchange).with(rozetkaRouting);
+        return BindingBuilder.bind(queue).to(exchange).where("shop").matches(ShopName.ROZETKA.name());
     }
 
     @Bean("outboundComfyRouting")
     Binding bindInboundComfy(@Qualifier("outboundComfyQueue") Queue queue,
-                             @Qualifier("outboundExchange") TopicExchange exchange) {
+                             @Qualifier("outboundExchange") HeadersExchange exchange) {
 
-        return BindingBuilder.bind(queue).to(exchange).with(comfyRouting);
+        return BindingBuilder.bind(queue).to(exchange).where("shop").matches(ShopName.COMFY.name());
     }
 
     @Bean("inboundComfyRouting")
     Binding bindInboundRozetka(@Qualifier("inboundComfyQueue") Queue queue,
-                               @Qualifier("inboundExchange") TopicExchange exchange) {
+                               @Qualifier("inboundExchange") HeadersExchange exchange) {
 
-        return BindingBuilder.bind(queue).to(exchange).with(comfyRouting);
+        return BindingBuilder.bind(queue).to(exchange).where("shop").matches(ShopName.COMFY.name());
+    }
+
+    @Bean
+    public Jackson2JsonMessageConverter getConverter(){
+       return new Jackson2JsonMessageConverter();
     }
 
 

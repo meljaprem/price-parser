@@ -23,6 +23,7 @@ public abstract class PriceChecker {
         String urlToCheck = getShopAddress() + productId;
         log.debug("Getting document from url: {}", urlToCheck);
         Document doc = Jsoup.connect(urlToCheck).followRedirects(true).get();
+        log.debug("Document is not null: {}", doc!=null);
         log.trace("Document which downloaded: {}", doc.body());
         return doc;
     }
@@ -31,10 +32,12 @@ public abstract class PriceChecker {
         if (productId == null) throw new IllegalArgumentException("productId is null");
         log.debug("Start checking price");
         Document document = getDocument(productId);
-        return parseDocument(document);
+        Double price = parseDocument(document);
+        log.debug("Parsed price: {}, shopAddress: {}", price, getShopAddress());
+        return price;
     }
 
-    public abstract String getShopAddress();
+    protected abstract String getShopAddress();
 
     protected abstract Double parseDocument(Document document);
 }

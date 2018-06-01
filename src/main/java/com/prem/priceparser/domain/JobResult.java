@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class JobResult {
     private Long product_id;
     private ShopName shop;
-    private Float price;
+    private Double price;
     private Boolean available;
     private String currency;
 }

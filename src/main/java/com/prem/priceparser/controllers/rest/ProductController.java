@@ -79,6 +79,15 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+
+//    @PostMapping
+//    public ResponseEntity<?> checkProductPrice(@RequestParam(required = true, name = "id") Long productId,
+//                                           Authentication authentication) {
+//        User user = getUser(authentication);
+//        productService.deleteProduct(productId, user);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
+
     private User getUser(Authentication authentication) {
         User user;
         if (authentication != null) {
@@ -86,7 +95,7 @@ public class ProductController {
             log.debug("authentication is not null, user = {}", user);
         } else {
             user = userService.getUserByUsername("admin");
-            log.debug("authentication is  null, user from DB = {}", user);
+            log.debug("authentication is null, user from DB = {}", user);
         }
         return user;
     }
