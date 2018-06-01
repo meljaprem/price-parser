@@ -7,6 +7,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * @author Melnyk_Dmytro
@@ -19,21 +20,33 @@ import java.io.IOException;
 @Slf4j
 public abstract class PriceChecker {
 
-    private Document getDocument(String productId) throws IOException {
+    private Optional<Document> getDocument(String productId) {
         String urlToCheck = getShopAddress() + productId;
         log.debug("Getting document from url: {}", urlToCheck);
-        Document doc = Jsoup.connect(urlToCheck).followRedirects(true).get();
-        log.trace("Document which downloaded: {}", doc.body());
-        return doc;
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(urlToCheck).followRedirects(true).get();
+            log.debug("Document is not null: {}", doc != null);
+            if (doc != null) {
+                log.trace("Document which downloaded: {}", doc.body());
+            }
+        } catch (IOException e) {
+            log.error("Exception while loading document from url: {}", urlToCheck, e);
+        }
+
+        return Optional.ofNullable(doc);
     }
 
-    public Double getPrice(String productId) throws IOException {
-        if (productId == null) throw new IllegalArgumentException("productId is null");
-        Document document = getDocument(productId);
-        return parseDocument(document);
+    public Double getPrice(String productId) {
+        log.debug("Start checking price");
+        Document document = getDocument(productId)
+                .orElseThrow(IllegalStateException::new);
+        Double price = parseDocument(document);
+        log.debug("Parsed price: {}, shopAddress: {}", price, getShopAddress());
+        return price;
     }
 
-    public abstract String getShopAddress();
+    protected abstract String getShopAddress();
 
     protected abstract Double parseDocument(Document document);
 }

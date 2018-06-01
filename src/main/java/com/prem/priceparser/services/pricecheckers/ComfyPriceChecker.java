@@ -15,21 +15,21 @@ import org.springframework.stereotype.Service;
  * @since 03.05.2018
  */
 
-@Service("rozetkaPriceChecker")
+@Service("comfyPriceChecker")
 @Getter
 @Setter
 @Slf4j
 @PropertySource("classpath:checkers.properties")
 @Profile("prod")
-public class RozetkaPriceChecker extends PriceChecker {
+public class ComfyPriceChecker extends PriceChecker {
 
-    private final static String SHOP_WEB_ADDRESS = "https://rozetka.com.ua/offer/";
-    @Value("${pattern.rozetka.cssQuery}")
+    private final static String SHOP_WEB_ADDRESS = "https://comfy.ua/";
+    @Value("${pattern.comfy.cssQuery}")
     private String cssQuery;
-    @Value("${pattern.rozetka.attrKey}")
+    @Value("${pattern.comfy.attrKey}")
     private String attrKey;
 
-    public RozetkaPriceChecker() {
+    public ComfyPriceChecker() {
     }
 
     @Override
