@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Entity
 @Data
@@ -45,24 +47,20 @@ public class Product {
     @Column(name = "code")
     private Map<ShopName, String> codesMap;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "shops_prices")
-    @MapKeyColumn(name = "shop_name")
-    @MapKeyEnumerated(value = EnumType.STRING)
-    @Column(name = "price")
-    private Map<ShopName, Double> shopsPrices;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ShopPrice> shopsPrices;
 
 
-    public Map<ShopName, String> getCodesMap() {
+    public Map<ShopName, String> getCodes() {
         if (codesMap == null) {
             codesMap = new HashMap<>();
         }
         return codesMap;
     }
 
-    public Map<ShopName, Double> getShopsPrices() {
-        if (shopsPrices == null) {
-            shopsPrices = new HashMap<>();
+    public Set<ShopPrice> getShopsPrices() {
+        if (shopsPrices==null){
+            shopsPrices = new TreeSet<>(ShopPrice.comparator());
         }
         return shopsPrices;
     }
