@@ -1,10 +1,10 @@
 package com.prem.priceparser.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.prem.priceparser.domain.enums.ShopName;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Comparator;
 import java.util.Date;
 
 /**
@@ -16,7 +16,6 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -26,6 +25,7 @@ public class ShopPrice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @JsonIgnore
     @ManyToOne(targetEntity = Product.class)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
@@ -53,5 +53,18 @@ public class ShopPrice {
         int result = product.hashCode();
         result = 31 * result + shop.hashCode();
         return result;
+    }
+
+
+
+    @Override
+    public String toString() {
+        return "ShopPrice{" +
+                "id=" + id +
+                ", product=" + product.getId() +
+                ", shop=" + shop +
+                ", lastCheckedDate=" + lastCheckedDate +
+                ", price=" + price +
+                '}';
     }
 }

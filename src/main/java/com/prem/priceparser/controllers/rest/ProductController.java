@@ -5,6 +5,7 @@ import com.prem.priceparser.domain.dto.ProductDto;
 import com.prem.priceparser.domain.entity.Product;
 import com.prem.priceparser.domain.entity.User;
 import com.prem.priceparser.domain.enums.RoleEnum;
+import com.prem.priceparser.domain.enums.ShopName;
 import com.prem.priceparser.mappers.ProductMapper;
 import com.prem.priceparser.services.ProductService;
 import com.prem.priceparser.services.UserService;
@@ -62,6 +63,26 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
+    @PutMapping("{id}/addShop")
+    public ResponseEntity<Product> createProduct(@RequestParam(required = true) String shop,
+                                                 @RequestParam(required = true) String code,
+                                                 @PathVariable(required = true, name = "id") Long productId,
+                                                 Authentication authentication) {
+        //TODO refactor it after testing
+        User user = getUser(authentication);
+        Product product = productService.addShop(user, productId, ShopName.valueOf(shop), code);
+        return new ResponseEntity<>(product, HttpStatus.OK);
+    }
+
+    @PostMapping("{id}/checkPrice")
+    public ResponseEntity<?> createProduct(@PathVariable(required = true, name = "id") Long productId,
+                                           Authentication authentication) {
+        //TODO refactor it after testing
+        User user = getUser(authentication);
+        productService.checkPrice(productId, user);
+        return new ResponseEntity<>("Request for checking was sent!", HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<ProductDto> updateProduct(ProductDto productDto,
                                                     Authentication authentication) {
@@ -82,8 +103,8 @@ public class ProductController {
 
     @PostMapping("/check/{id}")
     public ResponseEntity<?> checkProductPrice(@PathVariable(required = true, name = "id")
-                                                           Long productId,
-                                           Authentication authentication) {
+                                                       Long productId,
+                                               Authentication authentication) {
         User user = getUser(authentication);
 //        productService.checkPrice(productId, user);
         return new ResponseEntity<>(HttpStatus.OK);

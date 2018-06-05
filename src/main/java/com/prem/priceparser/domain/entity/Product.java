@@ -5,18 +5,19 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.prem.priceparser.domain.enums.ShopName;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"shopsPrices", "user"})
 @Builder
 @Table(name = "products")
 public class Product {
@@ -44,11 +45,14 @@ public class Product {
     @Column(name = "code")
     private Map<ShopName, String> codesMap;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "product",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
     private Set<ShopPrice> shopsPrices;
 
 
-    public Map<ShopName, String> getCodes() {
+    public Map<ShopName, String> getCodesMap() {
         if (codesMap == null) {
             codesMap = new HashMap<>();
         }
@@ -67,4 +71,6 @@ public class Product {
         this.name = name;
         this.expectedPrice = expectedPrice;
     }
+
+
 }

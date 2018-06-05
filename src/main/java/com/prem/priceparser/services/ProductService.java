@@ -3,13 +3,13 @@ package com.prem.priceparser.services;
 import com.prem.priceparser.domain.Job;
 import com.prem.priceparser.domain.entity.Product;
 import com.prem.priceparser.domain.entity.User;
+import com.prem.priceparser.domain.enums.ShopName;
 import com.prem.priceparser.exceptions.ExceptionErrorCode;
 import com.prem.priceparser.exceptions.GenericBusinessException;
 import com.prem.priceparser.rabbitmq.senders.RabbitMqSender;
 import com.prem.priceparser.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +38,6 @@ public class ProductService {
         return product;
     }
 
-
     public Product createProduct(Product product, User user) {
         product.setUser(user);
         return createProduct(product);
@@ -54,8 +53,7 @@ public class ProductService {
     public void deleteProduct(Long productId, User user) {
         log.debug("Deleting product with id <{}>", productId);
         Optional<Product> productOptional = productRepository.findByIdAndUser(productId, user);
-        Product product = productOptional
-                .orElseThrow(() -> new GenericBusinessException(ExceptionErrorCode.PRODUCT_NOT_FOUND));
+        Product product = getProductByUserAndProductId(productId, user);
         deleteProduct(product);
         log.debug("User with id {} deleted product with id {}", user.getId(), product.getId());
     }
@@ -82,6 +80,15 @@ public class ProductService {
         return products;
     }
 
+    @Transactional
+    public Product addShop(User user, Long productId, ShopName shop, String code) {
+        log.debug("Adding shop to product with id {}", productId);
+        Product product = getProductByUserAndProductId(productId, user);
+        product.getCodesMap().put(shop, code);
+        updateProduct(product);
+        return product;
+    }
+
     @Transactional(readOnly = true)
     public List<Product> getAll() {
         log.debug("Getting all products");
@@ -91,31 +98,24 @@ public class ProductService {
         return products;
     }
 
-//    @Transactional
-//    public void checkPrice(Long productId, User user) {
-//        Product product = productRepository.findByIdAndUser(productId, user)
-//                .orElseThrow(() -> new GenericBusinessException(ExceptionErrorCode.PRODUCT_NOT_FOUND));
-////        parseProduct(product)
-//                .forEach(inoundSender::sendMessageToQueue);
-//    }
+    @Transactional
+    public void checkPrice(Long productId, User user) {
+        log.debug("Checking prices of product with id {}", productId);
+        Product product = getProductByUserAndProductId(productId, user);
+        parseJobsFromProduct(product)
+                .forEach(inoundSender::sendMessageToQueue);
+        log.debug("Jobs of product {} successfully sent to queue", productId);
+    }
 
-//    @Transactional
-//    public void checkPrice(Long productId, User user) {
-//        productRepository.findByIdAndUser(productId, user)
-//                .map(this::parseProduct)
-//                .map(l -> l.stream()
-//                        .forEach())
-//                .orElseThrow(() -> new GenericBusinessException(ExceptionErrorCode.PRODUCT_NOT_FOUND));
-//    }
+    private Product getProductByUserAndProductId(Long productId, User user) {
+        return productRepository.findByIdAndUser(productId, user)
+                .orElseThrow(() -> new GenericBusinessException(ExceptionErrorCode.PRODUCT_NOT_FOUND));
+    }
 
-//    private List<Job> parseProduct(Product product) {
-//        List<Job> jobs = new ArrayList<>();
-//        product.getCodesMap()
-//                .keySet()
-//                .stream()
-//                .forEach((k, v) -> jobs.add(new Job(product.getId(), k, v)));
-//        return jobs;
-//    }
-
-
+    private List<Job> parseJobsFromProduct(Product product) {
+        List<Job> jobs = new ArrayList<>();
+        product.getCodesMap()
+                .forEach((k, v) -> jobs.add(new Job(product.getId(), k, v)));
+        return jobs;
+    }
 }
