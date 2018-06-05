@@ -49,7 +49,8 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<?> getAllProductsOfUser(Authentication authentication) {
-        List<Product> products = productService.getAll();
+        User user = getUser(authentication);
+        List<Product> products = productService.getAllByUser(user);
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
@@ -64,7 +65,7 @@ public class ProductController {
     }
 
     @PutMapping("{id}/addShop")
-    public ResponseEntity<Product> createProduct(@RequestParam(required = true) String shop,
+    public ResponseEntity<Product> addShopToProduct(@RequestParam(required = true) String shop,
                                                  @RequestParam(required = true) String code,
                                                  @PathVariable(required = true, name = "id") Long productId,
                                                  Authentication authentication) {
@@ -75,7 +76,7 @@ public class ProductController {
     }
 
     @PostMapping("{id}/checkPrice")
-    public ResponseEntity<?> createProduct(@PathVariable(required = true, name = "id") Long productId,
+    public ResponseEntity<?> checkPriceProduct(@PathVariable(required = true, name = "id") Long productId,
                                            Authentication authentication) {
         //TODO refactor it after testing
         User user = getUser(authentication);
