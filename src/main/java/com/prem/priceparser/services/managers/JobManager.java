@@ -3,10 +3,12 @@ package com.prem.priceparser.services.managers;
 import com.prem.priceparser.domain.Job;
 import com.prem.priceparser.domain.JobResult;
 import com.prem.priceparser.domain.enums.ShopName;
-import com.prem.priceparser.rabbitmq.senders.OutboundRabbitMqSender;
+import com.prem.priceparser.rabbitmq.senders.RabbitMqSender;
 import com.prem.priceparser.services.pricecheckers.PriceChecker;
+import com.prem.priceparser.services.pricecheckers.qualifiers.ComfyChecker;
+import com.prem.priceparser.services.pricecheckers.qualifiers.RozetkaChecker;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -19,19 +21,14 @@ import java.util.Date;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class JobManager {
 
+    @RozetkaChecker
     private final PriceChecker rozetkaPriceChecker;
+    @ComfyChecker
     private final PriceChecker comfyPriceChecker;
-    private final OutboundRabbitMqSender outboundSender;
-
-    public JobManager(@Qualifier("rozetkaPriceChecker") PriceChecker rozetkaPriceChecker,
-                      @Qualifier("comfyPriceChecker") PriceChecker comfyPriceChecker,
-                      OutboundRabbitMqSender outboundSender) {
-        this.rozetkaPriceChecker = rozetkaPriceChecker;
-        this.comfyPriceChecker = comfyPriceChecker;
-        this.outboundSender = outboundSender;
-    }
+    private final RabbitMqSender<JobResult> outboundSender;
 
     public void executeRozetkaJob(Job job) {
         log.debug("Executing job Rozetka for product id: {}", job.getProductId());

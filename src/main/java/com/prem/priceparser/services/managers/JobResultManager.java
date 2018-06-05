@@ -14,5 +14,5 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class JobResultManager {
-
+//TODO REPLACE CODE FROM CONSUMER AND USE IT!
 }

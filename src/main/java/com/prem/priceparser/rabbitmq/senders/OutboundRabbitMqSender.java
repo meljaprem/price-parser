@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Getter
 @Setter
 @Slf4j
-@Service("outboundRabbitMqSender")
+@Service
 public class OutboundRabbitMqSender extends RabbitMqSender<JobResult> {
     public OutboundRabbitMqSender(RabbitTemplate rabbitTemplate, RabbitMQConfig rabbitMQConfig, Jackson2JsonMessageConverter converter) {
         super(rabbitTemplate, rabbitMQConfig, converter);

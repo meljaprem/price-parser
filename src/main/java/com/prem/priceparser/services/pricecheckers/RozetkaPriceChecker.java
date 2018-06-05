@@ -1,5 +1,6 @@
 package com.prem.priceparser.services.pricecheckers;
 
+import com.prem.priceparser.services.pricecheckers.qualifiers.RozetkaChecker;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,8 @@ import org.springframework.stereotype.Service;
  * @since 03.05.2018
  */
 
-@Service("rozetkaPriceChecker")
+@RozetkaChecker
+@Service
 @Getter
 @Setter
 @Slf4j

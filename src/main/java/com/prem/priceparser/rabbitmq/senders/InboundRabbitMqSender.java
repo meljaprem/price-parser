@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Getter
 @Setter
 @Slf4j
-@Service("inboundRabbitMqSender")
+@Service
 public class InboundRabbitMqSender extends RabbitMqSender<Job> {
 
     private ThreadLocal<ShopName> shopNameHolder;
