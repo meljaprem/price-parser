@@ -80,13 +80,14 @@ public class ProductController {
     }
 
 
-//    @PostMapping
-//    public ResponseEntity<?> checkProductPrice(@RequestParam(required = true, name = "id") Long productId,
-//                                           Authentication authentication) {
-//        User user = getUser(authentication);
-//        productService.deleteProduct(productId, user);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    @PostMapping("/check/{id}")
+    public ResponseEntity<?> checkProductPrice(@PathVariable(required = true, name = "id")
+                                                           Long productId,
+                                           Authentication authentication) {
+        User user = getUser(authentication);
+//        productService.checkPrice(productId, user);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     private User getUser(Authentication authentication) {
         User user;

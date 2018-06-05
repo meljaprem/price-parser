@@ -1,14 +1,19 @@
 package com.prem.priceparser.services;
 
+import com.prem.priceparser.domain.Job;
 import com.prem.priceparser.domain.entity.Product;
 import com.prem.priceparser.domain.entity.User;
-import com.prem.priceparser.exceptions.NotAllowedDeletingException;
+import com.prem.priceparser.exceptions.ExceptionErrorCode;
+import com.prem.priceparser.exceptions.GenericBusinessException;
+import com.prem.priceparser.rabbitmq.senders.RabbitMqSender;
 import com.prem.priceparser.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +28,7 @@ import java.util.Optional;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private final RabbitMqSender<Job> inoundSender;
 
     @Transactional
     public Product createProduct(Product product) {
@@ -48,12 +54,10 @@ public class ProductService {
     public void deleteProduct(Long productId, User user) {
         log.debug("Deleting product with id <{}>", productId);
         Optional<Product> productOptional = productRepository.findByIdAndUser(productId, user);
-        if (productOptional.isPresent()) {
-            productRepository.deleteById(productOptional.get().getId());
-            log.debug("Product with id");
-        } else {
-            throw new NotAllowedDeletingException("Can't delete product with id " + productId + ", there is no product belongs to user with id " + user.getId());
-        }
+        Product product = productOptional
+                .orElseThrow(() -> new GenericBusinessException(ExceptionErrorCode.PRODUCT_NOT_FOUND));
+        deleteProduct(product);
+        log.debug("User with id {} deleted product with id {}", user.getId(), product.getId());
     }
 
     @Transactional
@@ -86,4 +90,32 @@ public class ProductService {
         log.trace("Products: {}", products);
         return products;
     }
+
+//    @Transactional
+//    public void checkPrice(Long productId, User user) {
+//        Product product = productRepository.findByIdAndUser(productId, user)
+//                .orElseThrow(() -> new GenericBusinessException(ExceptionErrorCode.PRODUCT_NOT_FOUND));
+////        parseProduct(product)
+//                .forEach(inoundSender::sendMessageToQueue);
+//    }
+
+//    @Transactional
+//    public void checkPrice(Long productId, User user) {
+//        productRepository.findByIdAndUser(productId, user)
+//                .map(this::parseProduct)
+//                .map(l -> l.stream()
+//                        .forEach())
+//                .orElseThrow(() -> new GenericBusinessException(ExceptionErrorCode.PRODUCT_NOT_FOUND));
+//    }
+
+//    private List<Job> parseProduct(Product product) {
+//        List<Job> jobs = new ArrayList<>();
+//        product.getCodesMap()
+//                .keySet()
+//                .stream()
+//                .forEach((k, v) -> jobs.add(new Job(product.getId(), k, v)));
+//        return jobs;
+//    }
+
+
 }

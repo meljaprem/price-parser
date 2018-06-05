@@ -13,4 +13,6 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
 
     Optional<Product> findByIdAndUser(Long productId, User user);
 
+    Boolean existsByIdAndUser(Long productId, User user);
+
 }
