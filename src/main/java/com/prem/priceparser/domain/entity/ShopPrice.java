@@ -1,10 +1,7 @@
 package com.prem.priceparser.domain.entity;
 
 import com.prem.priceparser.domain.enums.ShopName;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Comparator;
@@ -17,11 +14,14 @@ import java.util.Date;
  */
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "shops_prices")
+@Table(name = "shops_prices",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"product_id", "shop"}))
 public class ShopPrice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,17 +34,24 @@ public class ShopPrice {
     private ShopName shop;
     @Column(nullable = false)
     private Date lastCheckedDate;
+    @Column(nullable = true)
+    private Double price;
 
-    public static ShopPrice.ShopPriceComparator comparator() {
-        return new ShopPrice.ShopPriceComparator();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ShopPrice shopPrice = (ShopPrice) o;
+
+        if (!product.equals(shopPrice.product)) return false;
+        return shop == shopPrice.shop;
     }
 
-    public static class ShopPriceComparator implements Comparator<ShopPrice> {
-        @Override
-        public int compare(ShopPrice o1, ShopPrice o2) {
-            int i = o1.getProduct().getId()
-                    .compareTo(o2.getProduct().getId());
-            return i != 0 ? i : o1.getShop().compareTo(o2.getShop());
-        }
+    @Override
+    public int hashCode() {
+        int result = product.hashCode();
+        result = 31 * result + shop.hashCode();
+        return result;
     }
 }

@@ -11,10 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Entity
 @Data
@@ -60,7 +57,7 @@ public class Product {
 
     public Set<ShopPrice> getShopsPrices() {
         if (shopsPrices==null){
-            shopsPrices = new TreeSet<>(ShopPrice.comparator());
+            shopsPrices = new HashSet<>();
         }
         return shopsPrices;
     }
