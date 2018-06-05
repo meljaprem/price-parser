@@ -38,11 +38,13 @@ public class SpringApplicationTests {
     }
 
     @Test
+    @Ignore
     public void rozetkaPriceCheckerTest() throws IOException {
     rozetkaPriceChecker.getPrice("5563017");
     }
 
     @Test
+    @Ignore
     public void comfyPriceCheckerTest() throws IOException {
     comfyPriceChecker.getPrice("smartfon-lg-g6-h870-dual-sim-platinum-acsessuary");
     }

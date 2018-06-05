@@ -3,6 +3,7 @@ package com.prem.priceparser;
 
 import com.prem.priceparser.rabbitmq.senders.InboundRabbitMqSender;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,11 +12,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @Slf4j
 @SpringBootTest
-
+@Ignore
 public class RabbitMqSenderTests {
 
-    @Autowired
-    InboundRabbitMqSender sender;
+//    @Autowired
+//    InboundRabbitMqSender sender;
 
 //    @Test
 //    public void sendMessageToInbound(){
