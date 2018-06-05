@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 @Setter
 @Slf4j
 @PropertySource("classpath:checkers.properties")
-@Profile("prod")
 public class RozetkaPriceChecker extends PriceChecker {
 
     private final static String SHOP_WEB_ADDRESS = "https://rozetka.com.ua/offer/";

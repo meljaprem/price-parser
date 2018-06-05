@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 @Setter
 @Slf4j
 @PropertySource("classpath:checkers.properties")
-@Profile("prod")
 public class ComfyPriceChecker extends PriceChecker {
 
     private final static String SHOP_WEB_ADDRESS = "https://comfy.ua/";
