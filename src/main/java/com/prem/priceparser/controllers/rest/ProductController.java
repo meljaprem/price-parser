@@ -30,11 +30,10 @@ public class ProductController {
     private final ProductMapper productMapper;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable(name = "id") Long productId) {
-        Optional<Product> productOptional = productService.getProductById(productId);
-        return productOptional
-                .map(product -> new ResponseEntity<>(product, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<Product> getProductById(@PathVariable(name = "id") Long productId,
+                                                  Authentication authentication) {
+        User user = getUser(authentication);
+        return  new ResponseEntity<>(productService.getProductByIdAndUser(productId, user), HttpStatus.OK);
     }
 
     @GetMapping("/all")
@@ -101,24 +100,14 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
-    @PostMapping("/check/{id}")
-    public ResponseEntity<?> checkProductPrice(@PathVariable(required = true, name = "id")
-                                                       Long productId,
-                                               Authentication authentication) {
-        User user = getUser(authentication);
-//        productService.checkPrice(productId, user);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     private User getUser(Authentication authentication) {
         User user;
         if (authentication != null) {
             user = (User) authentication.getPrincipal();
-            log.debug("authentication is not null, user = {}", user);
+            log.debug("Authentication is not null, user = {}", user);
         } else {
             user = userService.getUserByUsername("admin");
-            log.debug("authentication is null, user from DB = {}", user);
+            log.debug("Authentication is null, user from DB = {}", user);
         }
         return user;
     }

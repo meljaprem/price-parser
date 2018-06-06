@@ -66,9 +66,16 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Product> getProductById(Long id) {
+    public Product getProductByIdAndUser(Long id, User user) {
+        log.debug("User {} is searching product with id <{}>", user.getId(), id);
+        return getProductByUserAndProductId(id, user);
+    }
+
+    @Transactional(readOnly = true)
+    public Product getProductById(Long id) {
         log.debug("Searching product with id <{}>", id);
-        return productRepository.findById(id);
+        return productRepository.findById(id)
+                .orElseThrow(() -> new GenericBusinessException(ExceptionErrorCode.PRODUCT_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
@@ -115,7 +122,7 @@ public class ProductService {
     private List<Job> parseJobsFromProduct(Product product) {
         List<Job> jobs = new ArrayList<>();
         product.getCodesMap()
-                .forEach((k, v) -> jobs.add(new Job(product.getId(), k, v)));
+                .forEach((key, value) -> jobs.add(new Job(product.getId(), key, value)));
         return jobs;
     }
 }
