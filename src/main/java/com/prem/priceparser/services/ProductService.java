@@ -38,6 +38,7 @@ public class ProductService {
         return product;
     }
 
+    @Transactional
     public Product createProduct(Product product, User user) {
         product.setUser(user);
         return createProduct(product);
