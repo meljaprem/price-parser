@@ -6,6 +6,7 @@ import com.prem.priceparser.domain.entity.User;
 import com.prem.priceparser.domain.enums.ShopName;
 import com.prem.priceparser.exceptions.ExceptionErrorCode;
 import com.prem.priceparser.exceptions.GenericBusinessException;
+import com.prem.priceparser.helpers.ProductUtils;
 import com.prem.priceparser.rabbitmq.senders.RabbitMqSender;
 import com.prem.priceparser.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -109,7 +109,7 @@ public class ProductService {
     public void checkPrice(Long productId, User user) {
         log.debug("Checking prices of product with id {}", productId);
         Product product = getProductByUserAndProductId(productId, user);
-        parseJobsFromProduct(product)
+        ProductUtils.parseJobsFromProduct(product)
                 .forEach(inoundSender::sendMessageToQueue);
         log.debug("Jobs of product {} successfully sent to queue", productId);
     }
@@ -117,12 +117,5 @@ public class ProductService {
     private Product getProductByUserAndProductId(Long productId, User user) {
         return productRepository.findByIdAndUser(productId, user)
                 .orElseThrow(() -> new GenericBusinessException(ExceptionErrorCode.PRODUCT_NOT_FOUND));
-    }
-
-    private List<Job> parseJobsFromProduct(Product product) {
-        List<Job> jobs = new ArrayList<>();
-        product.getCodesMap()
-                .forEach((key, value) -> jobs.add(new Job(product.getId(), key, value)));
-        return jobs;
     }
 }
