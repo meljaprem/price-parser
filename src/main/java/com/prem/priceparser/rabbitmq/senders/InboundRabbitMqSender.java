@@ -11,6 +11,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Slf4j
@@ -25,12 +27,18 @@ public class InboundRabbitMqSender extends RabbitMqSender<Job> {
     }
 
     @Override
-    public void sendMessageToQueue(Job job) {
+    public void sendJobToQueue(Job job) {
         log.debug("Sending object: {} to exchange: {} ", job, getExchange() );
         shopNameHolder.set(job.getShop());
         job.setShop(null);
         rabbitTemplate.convertAndSend(getExchange(), "", job, getPostProcessor());
         shopNameHolder.remove();
+    }
+
+    public void sendJobsToQueue(List<Job> jobs) {
+        log.debug("Sending list of jobs to exchange: {} ", getExchange() );
+        log.trace("List: {}", jobs);
+        rabbitTemplate.convertAndSend(getExchange(), rabbitMQConfig.getOutboundResultsQueueName(), jobs);
     }
 
     private MessagePostProcessor getPostProcessor(){

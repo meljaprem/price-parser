@@ -33,12 +33,12 @@ public class RabbitMqSenderTests {
 //    @Test
 //    public void sendMessageToInbound(){
 //        log.info("Sending message...");
-//        sender.sendMessageToQueue(new Job(213L, ShopName.ROZETKA, "SomeCode"));
+//        sender.sendJobToQueue(new Job(213L, ShopName.ROZETKA, "SomeCode"));
 //    }
 //
 //    @Test
 //    public void sendMessageToOutbound(){
 //        log.info("Sending message...");
-//        sender.sendMessageToQueue(new JobResult(213L, ShopName.ROZETKA, 123.23, true, "grn"));
+//        sender.sendJobToQueue(new JobResult(213L, ShopName.ROZETKA, 123.23, true, "grn"));
 //    }
 }

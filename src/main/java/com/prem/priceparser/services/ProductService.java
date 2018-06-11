@@ -3,6 +3,7 @@ package com.prem.priceparser.services;
 import com.prem.priceparser.domain.Job;
 import com.prem.priceparser.domain.entity.Product;
 import com.prem.priceparser.domain.entity.User;
+import com.prem.priceparser.domain.enums.ScheduleType;
 import com.prem.priceparser.domain.enums.ShopName;
 import com.prem.priceparser.exceptions.ExceptionErrorCode;
 import com.prem.priceparser.exceptions.GenericBusinessException;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Melnyk_Dmytro
@@ -28,7 +28,7 @@ import java.util.Optional;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
-    private final RabbitMqSender<Job> inoundSender;
+    private final RabbitMqSender<Job> inboundSender;
 
     @Transactional
     public Product createProduct(Product product) {
@@ -52,7 +52,6 @@ public class ProductService {
     @Transactional
     public void deleteProduct(Long productId, User user) {
         log.debug("Deleting product with id <{}>", productId);
-        Optional<Product> productOptional = productRepository.findByIdAndUser(productId, user);
         Product product = getProductByUserAndProductId(productId, user);
         deleteProduct(product);
         log.debug("User with id {} deleted product with id {}", user.getId(), product.getId());
@@ -110,8 +109,14 @@ public class ProductService {
         log.debug("Checking prices of product with id {}", productId);
         Product product = getProductByUserAndProductId(productId, user);
         ProductUtils.parseJobsFromProduct(product)
-                .forEach(inoundSender::sendMessageToQueue);
+                .forEach(inboundSender::sendJobToQueue);
         log.debug("Jobs of product {} successfully sent to queue", productId);
+    }
+
+    @Transactional
+    public List<Product> getAllScheduledByType(ScheduleType type){
+        log.debug("Getting all scheduled products with type {} ", type);
+        return productRepository.findAllByScheduledAndScheduleType(true, type);
     }
 
     private Product getProductByUserAndProductId(Long productId, User user) {

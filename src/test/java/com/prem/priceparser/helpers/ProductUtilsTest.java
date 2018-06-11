@@ -9,8 +9,6 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.*;
-
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,26 +38,5 @@ public class ProductUtilsTest {
         long time2 = System.nanoTime();
 
         log.info("Time for Pasha realisation: {}", time2-time1);
-    }
-
-    @Test
-    public void parseJobsFromListOfProduct() {
-        Product product1 = mock(Product.class);
-        Map<ShopName, String> map = new HashMap<>();
-        map.put(ShopName.ROZETKA,"Code1");
-        map.put(ShopName.CITRUS,"Code2");
-        when(product1.getCodesMap()).thenReturn(map);
-
-        List<Product> products = new ArrayList<>();
-        for (int i = 0; i < 100000; i++) {
-            product1.setId((long) (i+1));
-            products.add(product1);
-        }
-
-        long time1 = System.nanoTime();
-        List<Job> jobs = ProductUtils.parseJobsFromListOfProduct2(products);
-        long time2 = System.nanoTime();
-
-        log.info("Time for Bodya realisation: {}", time2-time1);
     }
 }

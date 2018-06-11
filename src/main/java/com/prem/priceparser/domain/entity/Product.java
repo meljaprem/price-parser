@@ -4,6 +4,7 @@ package com.prem.priceparser.domain.entity;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.prem.priceparser.domain.enums.ScheduleType;
 import com.prem.priceparser.domain.enums.ShopName;
 import lombok.*;
 
@@ -16,7 +17,6 @@ import java.util.Set;
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(exclude = {"shopsPrices", "user"})
 @Builder
 @Table(name = "products")
@@ -37,6 +37,13 @@ public class Product {
 
     @Column
     private Double expectedPrice;
+
+    @Column
+    private boolean scheduled;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ScheduleType scheduleType;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "product_codes")

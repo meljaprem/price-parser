@@ -19,7 +19,7 @@ public class OutboundRabbitMqSender extends RabbitMqSender<JobResult> {
     }
 
     @Override
-    public void sendMessageToQueue(JobResult result) {
+    public void sendJobToQueue(JobResult result) {
         log.debug("Sending object: {} to exchange: {} ", result, getExchange() );
         rabbitTemplate.convertAndSend(getExchange(), rabbitMQConfig.getOutboundResultsQueueName(), result);
     }
