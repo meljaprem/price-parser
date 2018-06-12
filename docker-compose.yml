@@ -5,17 +5,15 @@ services:
     restart: always
     image: parser
     container_name: parser
-#    links:
-#      - rabbitmq
-#      - postgres
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/price_parser
-      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin
       - SPRING_RABBITMQ_USERNAME=admin
       - SPRING_RABBITMQ_PASSWORD=admin
       - SPRING_RABBITMQ_PORT=5672
       - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_PROFILES_ACTIVE=docker,local
     ports:
       - 8080:8080
     depends_on:
