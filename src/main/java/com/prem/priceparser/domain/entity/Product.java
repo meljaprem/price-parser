@@ -17,6 +17,7 @@ import java.util.Set;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(exclude = {"shopsPrices", "user"})
 @Builder
 @Table(name = "products")

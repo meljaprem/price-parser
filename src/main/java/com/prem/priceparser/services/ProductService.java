@@ -8,14 +8,17 @@ import com.prem.priceparser.domain.enums.ShopName;
 import com.prem.priceparser.exceptions.ExceptionErrorCode;
 import com.prem.priceparser.exceptions.GenericBusinessException;
 import com.prem.priceparser.helpers.ProductUtils;
+import com.prem.priceparser.listeners.events.ChangeProductScheduleStatusEvent;
 import com.prem.priceparser.rabbitmq.senders.RabbitMqSender;
 import com.prem.priceparser.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Melnyk_Dmytro
@@ -29,6 +32,7 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
     private final RabbitMqSender<Job> inboundSender;
+    private ApplicationEventPublisher publisher;
 
     @Transactional
     public Product createProduct(Product product) {
@@ -95,6 +99,19 @@ public class ProductService {
         return product;
     }
 
+
+    @Transactional
+    public Product switchScheduler(User user, Long productId, Boolean active, ScheduleType type) {
+        log.debug("Setting scheduling of product with id {} to <{}>, schedule type: {}", productId, active, type);
+        Product product = getProductByUserAndProductId(productId, user);
+        if (product.getCodesMap().size() < 1) throw new GenericBusinessException(ExceptionErrorCode.NO_SHOPS_TO_CHECK);
+        product.setScheduled(active);
+        Optional.ofNullable(type).ifPresent(product::setScheduleType);
+        updateProduct(product);
+        publisher.publishEvent(new ChangeProductScheduleStatusEvent(product));
+        return product;
+    }
+
     @Transactional(readOnly = true)
     public List<Product> getAll() {
         log.debug("Getting all products");
@@ -114,7 +131,7 @@ public class ProductService {
     }
 
     @Transactional
-    public List<Product> getAllScheduledByType(ScheduleType type){
+    public List<Product> getAllScheduledByType(ScheduleType type) {
         log.debug("Getting all scheduled products with type {} ", type);
         return productRepository.findAllByScheduledAndScheduleType(true, type);
     }
