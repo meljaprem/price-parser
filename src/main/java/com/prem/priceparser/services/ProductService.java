@@ -3,17 +3,20 @@ package com.prem.priceparser.services;
 import com.prem.priceparser.domain.Job;
 import com.prem.priceparser.domain.entity.Product;
 import com.prem.priceparser.domain.entity.User;
+import com.prem.priceparser.domain.enums.ScheduleType;
 import com.prem.priceparser.domain.enums.ShopName;
 import com.prem.priceparser.exceptions.ExceptionErrorCode;
 import com.prem.priceparser.exceptions.GenericBusinessException;
+import com.prem.priceparser.helpers.ProductUtils;
+import com.prem.priceparser.listeners.events.ChangeProductScheduleStatusEvent;
 import com.prem.priceparser.rabbitmq.senders.RabbitMqSender;
 import com.prem.priceparser.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +31,8 @@ import java.util.Optional;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
-    private final RabbitMqSender<Job> inoundSender;
+    private final RabbitMqSender<Job> inboundSender;
+    private ApplicationEventPublisher publisher;
 
     @Transactional
     public Product createProduct(Product product) {
@@ -53,7 +57,6 @@ public class ProductService {
     @Transactional
     public void deleteProduct(Long productId, User user) {
         log.debug("Deleting product with id <{}>", productId);
-        Optional<Product> productOptional = productRepository.findByIdAndUser(productId, user);
         Product product = getProductByUserAndProductId(productId, user);
         deleteProduct(product);
         log.debug("User with id {} deleted product with id {}", user.getId(), product.getId());
@@ -97,6 +100,19 @@ public class ProductService {
         return product;
     }
 
+
+    @Transactional
+    public Product switchScheduler(User user, Long productId, Boolean active, ScheduleType type) {
+        log.debug("Setting scheduling of product with id {} to <{}>, schedule type: {}", productId, active, type);
+        Product product = getProductByUserAndProductId(productId, user);
+        if (product.getCodesMap().size() < 1) throw new GenericBusinessException(ExceptionErrorCode.NO_SHOPS_TO_CHECK);
+        product.setScheduled(active);
+        Optional.ofNullable(type).ifPresent(product::setScheduleType);
+        updateProduct(product);
+        publisher.publishEvent(new ChangeProductScheduleStatusEvent(product));
+        return product;
+    }
+
     @Transactional(readOnly = true)
     public List<Product> getAll() {
         log.debug("Getting all products");
@@ -110,20 +126,19 @@ public class ProductService {
     public void checkPrice(Long productId, User user) {
         log.debug("Checking prices of product with id {}", productId);
         Product product = getProductByUserAndProductId(productId, user);
-        parseJobsFromProduct(product)
-                .forEach(inoundSender::sendMessageToQueue);
+        ProductUtils.parseJobsFromProduct(product)
+                .forEach(inboundSender::sendJobToQueue);
         log.debug("Jobs of product {} successfully sent to queue", productId);
+    }
+
+    @Transactional
+    public List<Product> getAllScheduledByType(ScheduleType type) {
+        log.debug("Getting all scheduled products with type {} ", type);
+        return productRepository.findAllByScheduledAndScheduleType(true, type);
     }
 
     private Product getProductByUserAndProductId(Long productId, User user) {
         return productRepository.findByIdAndUser(productId, user)
                 .orElseThrow(() -> new GenericBusinessException(ExceptionErrorCode.PRODUCT_NOT_FOUND));
-    }
-
-    private List<Job> parseJobsFromProduct(Product product) {
-        List<Job> jobs = new ArrayList<>();
-        product.getCodesMap()
-                .forEach((key, value) -> jobs.add(new Job(product.getId(), key, value)));
-        return jobs;
     }
 }

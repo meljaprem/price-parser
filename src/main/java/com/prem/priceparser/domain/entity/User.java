@@ -33,13 +33,13 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String email;
     @Column(nullable = false)
-    private boolean accountNonExpired = true;
+    private boolean accountNonExpired;
     @Column(nullable = false)
-    private boolean accountNonLocked = true;
+    private boolean accountNonLocked;
     @Column(nullable = false)
-    private boolean credentialsNonExpired = true;
+    private boolean credentialsNonExpired;
     @Column(nullable = false)
-    private boolean enabled = true;
+    private boolean enabled;
 
     @JsonIgnore
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)

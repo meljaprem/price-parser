@@ -34,7 +34,7 @@ public class JobManager {
         log.debug("Executing job Rozetka for product id: {}", job.getProductId());
         Double price = rozetkaPriceChecker.getPrice(job.getCode());
         JobResult jobResult = buildJobResult(job, price, ShopName.ROZETKA);
-        outboundSender.sendMessageToQueue(jobResult);
+        outboundSender.sendJobToQueue(jobResult);
         log.debug("Job Rozetka for product id {} successfully executed", job.getProductId());
     }
 
@@ -42,7 +42,7 @@ public class JobManager {
         log.debug("Executing job Rozetka with product id: {}", job.getProductId());
         Double price = comfyPriceChecker.getPrice(job.getCode());
         JobResult jobResult = buildJobResult(job, price, ShopName.COMFY);
-        outboundSender.sendMessageToQueue(jobResult);
+        outboundSender.sendJobToQueue(jobResult);
         log.debug("Job Rozetka for product id {} successfully executed", job.getProductId());
     }
 

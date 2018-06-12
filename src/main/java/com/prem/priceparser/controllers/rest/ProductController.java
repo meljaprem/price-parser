@@ -5,6 +5,7 @@ import com.prem.priceparser.domain.dto.ProductDto;
 import com.prem.priceparser.domain.entity.Product;
 import com.prem.priceparser.domain.entity.User;
 import com.prem.priceparser.domain.enums.RoleEnum;
+import com.prem.priceparser.domain.enums.ScheduleType;
 import com.prem.priceparser.domain.enums.ShopName;
 import com.prem.priceparser.mappers.ProductMapper;
 import com.prem.priceparser.services.ProductService;
@@ -33,7 +34,7 @@ public class ProductController {
     public ResponseEntity<Product> getProductById(@PathVariable(name = "id") Long productId,
                                                   Authentication authentication) {
         User user = getUser(authentication);
-        return  new ResponseEntity<>(productService.getProductByIdAndUser(productId, user), HttpStatus.OK);
+        return new ResponseEntity<>(productService.getProductByIdAndUser(productId, user), HttpStatus.OK);
     }
 
     @GetMapping("/all")
@@ -65,9 +66,9 @@ public class ProductController {
 
     @PutMapping("{id}/addShop")
     public ResponseEntity<Product> addShopToProduct(@RequestParam(required = true) String shop,
-                                                 @RequestParam(required = true) String code,
-                                                 @PathVariable(required = true, name = "id") Long productId,
-                                                 Authentication authentication) {
+                                                    @RequestParam(required = true) String code,
+                                                    @PathVariable(required = true, name = "id") Long productId,
+                                                    Authentication authentication) {
         //TODO refactor it after testing
         User user = getUser(authentication);
         Product product = productService.addShop(user, productId, ShopName.valueOf(shop), code);
@@ -76,11 +77,29 @@ public class ProductController {
 
     @PostMapping("{id}/checkPrice")
     public ResponseEntity<?> checkPriceProduct(@PathVariable(required = true, name = "id") Long productId,
-                                           Authentication authentication) {
+                                               Authentication authentication) {
         //TODO refactor it after testing
         User user = getUser(authentication);
         productService.checkPrice(productId, user);
         return new ResponseEntity<>("Request for checking was sent!", HttpStatus.OK);
+    }
+
+    @PostMapping("{id}/scheduleActive")
+    public ResponseEntity<?> checkPriceProduct(@PathVariable(required = true, name = "id") Long productId,
+                                               @RequestParam(required = true, name = "active") Boolean active,
+                                               @RequestParam(required = false) String scheduleType,
+                                               Authentication authentication) {
+        //TODO refactor it after testing
+        User user = getUser(authentication);
+        Product product = null;
+        if (active && (scheduleType == null || scheduleType.length() < 1)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else if (scheduleType == null || scheduleType.length() < 1) {
+            product = productService.switchScheduler(user, productId, active, null);
+        } else {
+            product = productService.switchScheduler(user, productId, active, ScheduleType.valueOf(scheduleType));
+        }
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     @PostMapping

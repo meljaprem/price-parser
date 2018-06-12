@@ -26,7 +26,7 @@ public abstract class RabbitMqSender<T> {
     protected final RabbitMQConfig rabbitMQConfig;
     protected final Jackson2JsonMessageConverter converter;
 
-    public abstract void sendMessageToQueue(T t);
+    public abstract void sendJobToQueue(T t);
 
     public abstract String getExchange();
 

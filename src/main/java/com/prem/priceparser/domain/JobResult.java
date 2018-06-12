@@ -16,6 +16,5 @@ public class JobResult {
     private Long product_id;
     private ShopName shop;
     private Double price;
-    private Boolean available = true;
     private Date date;
 }
