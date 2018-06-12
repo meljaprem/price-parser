@@ -4,6 +4,7 @@ import com.prem.priceparser.domain.enums.ShopName;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.support.converter.DefaultClassMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -77,7 +78,14 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(queue).to(exchange).withQueueName();
     }
     @Bean
-    public Jackson2JsonMessageConverter getConverter(){
-       return new Jackson2JsonMessageConverter();
+    public Jackson2JsonMessageConverter getConverter(DefaultClassMapper mapper){
+        Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
+        converter.setClassMapper(mapper);
+        return converter;
+    }
+
+    @Bean
+    public DefaultClassMapper getDefaultClassMapper(){
+        return new DefaultClassMapper();
     }
 }

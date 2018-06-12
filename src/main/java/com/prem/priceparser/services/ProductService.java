@@ -32,7 +32,7 @@ import java.util.Optional;
 public class ProductService {
     private final ProductRepository productRepository;
     private final RabbitMqSender<Job> inboundSender;
-    private ApplicationEventPublisher publisher;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public Product createProduct(Product product) {
@@ -99,7 +99,6 @@ public class ProductService {
         updateProduct(product);
         return product;
     }
-
 
     @Transactional
     public Product switchScheduler(User user, Long productId, Boolean active, ScheduleType type) {

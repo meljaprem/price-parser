@@ -18,16 +18,14 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class ChangeSchedulerMinutelyCacheListener {
 
-    @EventListener(condition = "#{event.product.scheduled " +
-            "and event.product.scheduleType.equals(T(com.prem.priceparser.domain.enums.ScheduleType).MINUTE)}")
+    @EventListener(condition = "event.product.scheduled and event.product.scheduleType.equals(T(com.prem.priceparser.domain.enums.ScheduleType).MINUTE)")
     public void addJobsToCache(ChangeProductScheduleStatusEvent event) {
         Product product = event.getProduct();
         ScheduledPriceChecker.minutelyJobsCache
                 .addAll(ProductUtils.parseJobsFromProduct(product));
     }
 
-    @EventListener(condition = "#{event.product.scheduled == false " +
-            "and event.product.scheduleType.equals(T(com.prem.priceparser.domain.enums.ScheduleType).MINUTE)}")
+    @EventListener(condition = "event.product.scheduled == false and event.product.scheduleType.equals(T(com.prem.priceparser.domain.enums.ScheduleType).MINUTE)")
     public void removeJobsfromCache(ChangeProductScheduleStatusEvent event) {
         Product product = event.getProduct();
         ScheduledPriceChecker.minutelyJobsCache
