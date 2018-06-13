@@ -3,6 +3,7 @@ package com.prem.priceparser.controllers.rest;
 
 import com.prem.priceparser.domain.dto.ProductDto;
 import com.prem.priceparser.domain.entity.Product;
+import com.prem.priceparser.domain.entity.Role;
 import com.prem.priceparser.domain.entity.User;
 import com.prem.priceparser.domain.enums.RoleEnum;
 import com.prem.priceparser.domain.enums.ScheduleType;
@@ -40,11 +41,8 @@ public class ProductController {
     @GetMapping("/all")
     public ResponseEntity<?> getAllProducts(Authentication authentication) {
         User user = getUser(authentication);
-        if (user.getAuthorities().contains(RoleEnum.ADMIN)) {
-            return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(productService.getAll(user), HttpStatus.OK);
+
     }
 
     @GetMapping

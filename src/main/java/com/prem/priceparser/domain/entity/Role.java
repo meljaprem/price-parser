@@ -2,9 +2,8 @@ package com.prem.priceparser.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.prem.priceparser.domain.enums.RoleEnum;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -12,8 +11,7 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-@Getter
-@Setter
+@EqualsAndHashCode(exclude = "users")
 @ToString(exclude = "users")
 @NoArgsConstructor
 @Table(name = "roles")

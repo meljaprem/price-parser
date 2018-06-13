@@ -3,6 +3,7 @@ package com.prem.priceparser.services;
 import com.prem.priceparser.domain.Job;
 import com.prem.priceparser.domain.entity.Product;
 import com.prem.priceparser.domain.entity.User;
+import com.prem.priceparser.domain.enums.RoleEnum;
 import com.prem.priceparser.domain.enums.ScheduleType;
 import com.prem.priceparser.domain.enums.ShopName;
 import com.prem.priceparser.exceptions.ExceptionErrorCode;
@@ -11,6 +12,7 @@ import com.prem.priceparser.helpers.ProductUtils;
 import com.prem.priceparser.listeners.events.ChangeProductScheduleStatusEvent;
 import com.prem.priceparser.rabbitmq.senders.RabbitMqSender;
 import com.prem.priceparser.repository.ProductRepository;
+import com.prem.priceparser.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -31,6 +33,7 @@ import java.util.Optional;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private final RoleRepository roleRepository;
     private final RabbitMqSender<Job> inboundSender;
     private final ApplicationEventPublisher publisher;
 
@@ -113,12 +116,16 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> getAll() {
+    public List<Product> getAll(User user) {
         log.debug("Getting all products");
-        List<Product> products = (List<Product>) productRepository.findAll();
-        log.debug("Found {} products", products.size());
-        log.trace("Products: {}", products);
-        return products;
+        if (user.getAuthorities().contains(roleRepository.findByRole(RoleEnum.ADMIN))) {
+            List<Product> products = (List<Product>) productRepository.findAll();
+            log.debug("Found {} products", products.size());
+            log.trace("Products: {}", products);
+            return products;
+        } else {
+            throw new GenericBusinessException(ExceptionErrorCode.PRODUCT_NOT_FOUND);
+        }
     }
 
     @Transactional
