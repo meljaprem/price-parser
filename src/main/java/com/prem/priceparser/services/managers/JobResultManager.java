@@ -4,6 +4,7 @@ import com.prem.priceparser.domain.JobResult;
 import com.prem.priceparser.domain.entity.Product;
 import com.prem.priceparser.domain.entity.ShopPrice;
 import com.prem.priceparser.services.ProductService;
+import com.prem.priceparser.services.ShopPriceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class JobResultManager {
     private final ProductService productService;
+    private final ShopPriceService shopPriceService;
 
     @Transactional
     public void parseResult(JobResult result){
@@ -31,7 +33,9 @@ public class JobResultManager {
         Set<ShopPrice> shopsPrices = product.getShopsPrices();
         shopsPrices.remove(shopPrice);
         shopsPrices.add(shopPrice);
+        shopPriceService.deleteShopPriceByProductIdAndShop(shopPrice.getProduct().getId(), shopPrice.getShop());
         productService.updateProduct(product);
+        log.debug("Managing result for {} done!", result);
     }
 
     private ShopPrice createShopPrice(JobResult result, Product product) {

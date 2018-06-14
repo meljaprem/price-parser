@@ -11,8 +11,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,29 +27,20 @@ public class InboundRabbitMqSender extends RabbitMqSender<Job> {
         this.shopNameHolder = new ThreadLocal<>();
     }
 
+
+    //TODO try to refactor it and use spring AOP
     @Override
     public void sendJobToQueue(Job job) {
         log.debug("Sending object: {} to exchange: {} ", job, getExchange());
         shopNameHolder.set(job.getShop());
-        job.setShop(null);
         rabbitTemplate.convertAndSend(getExchange(), "", job, getPostProcessor());
         shopNameHolder.remove();
     }
 
-
-    //TODO try to refactor it and use spring AOP
     public void sendJobsToQueue(List<Job> jobs) {
         log.debug("Sending list of jobs to exchange: {} ", getExchange());
         log.trace("Jobs to send: {}", jobs);
-        List<ShopName> shopNames = Arrays.asList(ShopName.values());
-        shopNames.stream()
-                .map(shopName -> filterByShop(jobs, shopName))
-                .filter(list -> list.size() > 0)
-                .forEach(parsedList -> {
-                    shopNameHolder.set(parsedList.get(0).getShop());
-                    sendListOfJobsToQueue(parsedList);
-                    shopNameHolder.remove();
-                });
+        jobs.parallelStream().forEach(this::sendJobToQueue);
     }
 
     private void sendListOfJobsToQueue(List<Job> jobs) {
