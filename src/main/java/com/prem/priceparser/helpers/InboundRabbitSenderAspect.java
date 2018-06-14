@@ -20,7 +20,6 @@ public class InboundRabbitSenderAspect {
     public void threadLocalUsing() {
     }
 
-
     @Around(value = "threadLocalUsing()")
     public void saveShopToThreadLocal(ProceedingJoinPoint point) throws Throwable {
         log.trace("Starting advice to save ShopName to ThreadLocal var");

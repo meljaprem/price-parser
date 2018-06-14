@@ -6,9 +6,9 @@ package com.prem.priceparser.listeners.events;
  * @since 12.06.2018
  */
 
-public class ChangeProductScheduleStatusEvent extends ProductChangesEvent {
+public class DeleteProductEvent extends ProductChangesEvent {
 
-    public ChangeProductScheduleStatusEvent(Object source) {
+    public DeleteProductEvent(Object source) {
         super(source);
     }
 }

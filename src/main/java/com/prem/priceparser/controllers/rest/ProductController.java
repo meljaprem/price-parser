@@ -59,7 +59,7 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
-    @PutMapping("{id}/addShop")
+    @PutMapping("{id}/shop")
     public ResponseEntity<Product> addShopToProduct(@RequestParam(required = true) String shop,
                                                     @RequestParam(required = true) String code,
                                                     @PathVariable(required = true, name = "id") Long productId,
@@ -70,7 +70,18 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
-    @PostMapping("{id}/checkPrice")
+
+    @DeleteMapping("{id}/shop")
+    public ResponseEntity<Product> deleteShopFromProduct(@RequestParam(required = true) String shop,
+                                                    @PathVariable(required = true, name = "id") Long productId,
+                                                    Authentication authentication) {
+        //TODO refactor it after testing
+        User user = getUser(authentication);
+        Product product = productService.deleteShopFromProduct(user, productId, ShopName.valueOf(shop));
+        return new ResponseEntity<>(product, HttpStatus.OK);
+    }
+
+    @PostMapping("{id}/price")
     public ResponseEntity<?> checkPriceProduct(@PathVariable(required = true, name = "id") Long productId,
                                                Authentication authentication) {
         //TODO refactor it after testing
@@ -79,7 +90,7 @@ public class ProductController {
         return new ResponseEntity<>("Request for checking was sent!", HttpStatus.OK);
     }
 
-    @PostMapping("{id}/scheduleActive")
+    @PostMapping("{id}/schedule")
     public ResponseEntity<?> checkPriceProduct(@PathVariable(required = true, name = "id") Long productId,
                                                @RequestParam(required = true, name = "active") Boolean active,
                                                @RequestParam(required = false) String scheduleType,
@@ -106,8 +117,8 @@ public class ProductController {
         return new ResponseEntity<>(productMapper.convertToDto(product), HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteProduct(@RequestParam(required = true, name = "id") Long productId,
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable(required = true, name = "id") Long productId,
                                            Authentication authentication) {
         User user = getUser(authentication);
         productService.deleteProduct(productId, user);
@@ -118,10 +129,10 @@ public class ProductController {
         User user;
         if (authentication != null) {
             user = (User) authentication.getPrincipal();
-            log.debug("Authentication is not null, user = {}", user);
+            log.trace("Authentication is not null, user = {}", user);
         } else {
             user = userService.getUserByUsername("admin");
-            log.debug("Authentication is null, user from DB = {}", user);
+            log.trace("Authentication is null, user from DB = {}", user);
         }
         return user;
     }

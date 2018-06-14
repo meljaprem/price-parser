@@ -65,16 +65,22 @@ public class ScheduledPriceChecker {
 
     @Scheduled(fixedDelayString = "${scheduler.minutely.delay}")
     public void minutelyChecker() {
-        if (minutelyJobsCache.size()>0) {
+        if (minutelyJobsCache.size() > 0) {
             log.info("Performing scheduled minutely task");
             log.debug("There are {} jobs to send in queue", minutelyJobsCache.size());
-            inboundSender.sendJobsToQueue(minutelyJobsCache);
+            sendJobsToQueue(minutelyJobsCache);
         }
     }
 
     private void parseToJobsAndSendToQueue(List<Product> products) {
         List<Job> jobs = ProductUtils.parseJobsFromListOfProduct(products);
         log.debug("There are {} jobs to send in queue", jobs.size());
-        inboundSender.sendJobsToQueue(jobs);
+        sendJobsToQueue(jobs);
+    }
+
+    public void sendJobsToQueue(List<Job> jobs) {
+        log.debug("Sending list of jobs to checking price");
+        log.trace("Jobs to send: {}", jobs);
+        jobs.parallelStream().forEach(inboundSender::sendJobToQueue);
     }
 }

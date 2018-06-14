@@ -22,7 +22,9 @@ public class InboundRabbitMqSender extends RabbitMqSender<Job> {
 
     private ThreadLocal<ShopName> shopNameHolder;
 
-    public InboundRabbitMqSender(RabbitTemplate rabbitTemplate, RabbitMQConfig rabbitMQConfig, Jackson2JsonMessageConverter converter) {
+    public InboundRabbitMqSender(RabbitTemplate rabbitTemplate,
+                                 RabbitMQConfig rabbitMQConfig,
+                                 Jackson2JsonMessageConverter converter) {
         super(rabbitTemplate, rabbitMQConfig, converter);
         this.shopNameHolder = new ThreadLocal<>();
     }
@@ -34,17 +36,6 @@ public class InboundRabbitMqSender extends RabbitMqSender<Job> {
     public void sendJobToQueue(Job job) {
         log.debug("Sending object: {} to exchange: {} ", job, getExchange());
         rabbitTemplate.convertAndSend(getExchange(), "", job, getPostProcessor());
-    }
-
-    public void sendJobsToQueue(List<Job> jobs) {
-        log.debug("Sending list of jobs to exchange: {} ", getExchange());
-        log.trace("Jobs to send: {}", jobs);
-        jobs.parallelStream().forEach(this::sendJobToQueue);
-    }
-
-    private void sendListOfJobsToQueue(List<Job> jobs) {
-        log.trace("Sending parsed list with shop: {}", jobs.get(0).getShop());
-        rabbitTemplate.convertAndSend(getExchange(), "", jobs, getPostProcessor());
     }
 
     private List<Job> filterByShop(List<Job> jobs, ShopName shop) {

@@ -9,10 +9,14 @@ import com.prem.priceparser.domain.enums.ShopName;
 import com.prem.priceparser.exceptions.ExceptionErrorCode;
 import com.prem.priceparser.exceptions.GenericBusinessException;
 import com.prem.priceparser.helpers.ProductUtils;
+import com.prem.priceparser.listeners.events.AddShopEvent;
 import com.prem.priceparser.listeners.events.ChangeProductScheduleStatusEvent;
+import com.prem.priceparser.listeners.events.DeleteProductEvent;
+import com.prem.priceparser.listeners.events.DeleteShopEvent;
 import com.prem.priceparser.rabbitmq.senders.RabbitMqSender;
 import com.prem.priceparser.repository.ProductRepository;
 import com.prem.priceparser.repository.RoleRepository;
+import com.prem.priceparser.repository.ShopPriceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -33,6 +37,7 @@ import java.util.Optional;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ShopPriceRepository shopPriceRepository;
     private final RoleRepository roleRepository;
     private final RabbitMqSender<Job> inboundSender;
     private final ApplicationEventPublisher publisher;
@@ -54,12 +59,12 @@ public class ProductService {
     @Transactional
     public void deleteProduct(Product product) {
         log.debug("Deleting product with id <{}>", product.getId());
+        publisher.publishEvent(new DeleteProductEvent(product));
         productRepository.delete(product);
     }
 
     @Transactional
     public void deleteProduct(Long productId, User user) {
-        log.debug("Deleting product with id <{}>", productId);
         Product product = getProductByUserAndProductId(productId, user);
         deleteProduct(product);
         log.debug("User with id {} deleted product with id {}", user.getId(), product.getId());
@@ -100,6 +105,7 @@ public class ProductService {
         Product product = getProductByUserAndProductId(productId, user);
         product.getCodesMap().put(shop, code);
         updateProduct(product);
+        publisher.publishEvent(new AddShopEvent(product, shop));
         return product;
     }
 
@@ -138,6 +144,17 @@ public class ProductService {
     }
 
     @Transactional
+    public Product deleteShopFromProduct(User user, Long productId, ShopName shopName) {
+        log.debug("Deleting shop {} from product {}", shopName, productId);
+        Product product = getProductByIdAndUser(productId, user);
+        shopPriceRepository.deleteByProductIdAndShop(productId, shopName);
+        product.getCodesMap().remove(shopName);
+        publisher.publishEvent(new DeleteShopEvent(product, shopName));
+        updateProduct(product);
+        return product;
+    }
+
+    @Transactional
     public List<Product> getAllScheduledByType(ScheduleType type) {
         log.debug("Getting all scheduled products with type {} ", type);
         return productRepository.findAllByScheduledAndScheduleType(true, type);
@@ -147,4 +164,5 @@ public class ProductService {
         return productRepository.findByIdAndUser(productId, user)
                 .orElseThrow(() -> new GenericBusinessException(ExceptionErrorCode.PRODUCT_NOT_FOUND));
     }
+
 }
