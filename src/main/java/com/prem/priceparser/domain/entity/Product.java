@@ -18,7 +18,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"shopsPrices", "user"})
+@EqualsAndHashCode(exclude = {"shopsPrices", "user", "expectedPrice", "scheduled"})
 @Builder
 @Table(name = "products")
 public class Product {
@@ -54,9 +54,8 @@ public class Product {
     private Map<ShopName, String> codesMap;
 
     @OneToMany(mappedBy = "product",
-            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
-            orphanRemoval = true)
+            cascade = CascadeType.ALL)
     private Set<ShopPrice> shopsPrices;
 
 

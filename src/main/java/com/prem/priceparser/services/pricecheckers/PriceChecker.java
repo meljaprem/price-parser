@@ -20,8 +20,8 @@ import java.util.Optional;
 @Slf4j
 public abstract class PriceChecker {
 
-    private Optional<Document> getDocument(String productId) {
-        String urlToCheck = getShopAddress() + productId;
+    private Optional<Document> getDocument(String productCode) {
+        String urlToCheck = getShopAddress() + productCode;
         log.debug("Getting document from url: {}", urlToCheck);
         Document doc = null;
         try {
@@ -37,9 +37,9 @@ public abstract class PriceChecker {
         return Optional.ofNullable(doc);
     }
 
-    public Double getPrice(String productId) {
+    public Double getPrice(String productCode) {
         log.debug("Start checking price");
-        Document document = getDocument(productId)
+        Document document = getDocument(productCode)
                 .orElseThrow(IllegalStateException::new);
         Double price = parseDocument(document);
         log.debug("Parsed price: {}, shopAddress: {}", price, getShopAddress());

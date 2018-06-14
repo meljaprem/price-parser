@@ -3,6 +3,7 @@ package com.prem.priceparser.repository;
 import com.prem.priceparser.domain.entity.User;
 import org.springframework.data.repository.CrudRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 

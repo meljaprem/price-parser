@@ -1,24 +1,24 @@
 version: '3'
 services:
 
-  app:
-    restart: always
-    image: parser
-    container_name: parser
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/price_parser
-      - SPRING_DATASOURCE_USERNAME=admin
-      - SPRING_DATASOURCE_PASSWORD=admin
-      - SPRING_RABBITMQ_USERNAME=admin
-      - SPRING_RABBITMQ_PASSWORD=admin
-      - SPRING_RABBITMQ_PORT=5672
-      - SPRING_RABBITMQ_HOST=rabbitmq
-      - SPRING_PROFILES_ACTIVE=docker,local
-    ports:
-      - 8080:8080
-    depends_on:
-      - postgres
-      - rabbitmq
+#  app:
+#    restart: always
+#    image: parser
+#    container_name: parser
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/price_parser
+#      - SPRING_DATASOURCE_USERNAME=admin
+#      - SPRING_DATASOURCE_PASSWORD=admin
+#      - SPRING_RABBITMQ_USERNAME=admin
+#      - SPRING_RABBITMQ_PASSWORD=admin
+#      - SPRING_RABBITMQ_PORT=5672
+#      - SPRING_RABBITMQ_HOST=rabbitmq
+#      - SPRING_PROFILES_ACTIVE=docker,local
+#    ports:
+#      - 8080:8080
+#    depends_on:
+#      - postgres
+#      - rabbitmq
 
   postgres:
     container_name: postgres

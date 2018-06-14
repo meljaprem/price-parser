@@ -39,7 +39,7 @@ public class JobManager {
     }
 
     public void executeComfyJob(Job job) {
-        log.debug("Executing job Rozetka with product id: {}", job.getProductId());
+        log.debug("Executing job Comfy with product id: {}", job.getProductId());
         Double price = comfyPriceChecker.getPrice(job.getCode());
         JobResult jobResult = buildJobResult(job, price, ShopName.COMFY);
         outboundSender.sendJobToQueue(jobResult);
