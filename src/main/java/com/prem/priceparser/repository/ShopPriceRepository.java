@@ -3,10 +3,8 @@ package com.prem.priceparser.repository;
 import com.prem.priceparser.domain.entity.Product;
 import com.prem.priceparser.domain.entity.ShopPrice;
 import com.prem.priceparser.domain.enums.ShopName;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.CrudRepository;
 
-import javax.transaction.Transactional;
 import java.util.Set;
 
 public interface ShopPriceRepository extends CrudRepository<ShopPrice, Long> {

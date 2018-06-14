@@ -8,7 +8,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,7 +27,6 @@ public class ProductUtilsTest {
         Product product1 = mock(Product.class);
         Map<ShopName, String> map = new HashMap<>();
         map.put(ShopName.ROZETKA,"Code1");
-        map.put(ShopName.CITRUS,"Code2");
         when(product1.getCodesMap()).thenReturn(map);
         when(product1.getId()).thenReturn(1L);
 
