@@ -27,14 +27,13 @@ public class InboundRabbitMqSender extends RabbitMqSender<Job> {
         this.shopNameHolder = new ThreadLocal<>();
     }
 
-
-    //TODO try to refactor it and use spring AOP
+    /**
+     * Using InboundRabbitSenderAspect to set shopname at ThreadLocal variable
+     **/
     @Override
     public void sendJobToQueue(Job job) {
         log.debug("Sending object: {} to exchange: {} ", job, getExchange());
-        shopNameHolder.set(job.getShop());
         rabbitTemplate.convertAndSend(getExchange(), "", job, getPostProcessor());
-        shopNameHolder.remove();
     }
 
     public void sendJobsToQueue(List<Job> jobs) {
