@@ -3,7 +3,6 @@ package com.prem.priceparser.services.managers;
 import com.prem.priceparser.domain.JobResult;
 import com.prem.priceparser.domain.entity.Product;
 import com.prem.priceparser.domain.entity.ShopPrice;
-import com.prem.priceparser.repository.ShopPriceRepository;
 import com.prem.priceparser.services.ProductService;
 import com.prem.priceparser.services.ShopPriceService;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +32,10 @@ public class JobResultManager {
         ShopPrice shopPrice = createShopPrice(result, product);
         Set<ShopPrice> shopsPrices = product.getShopsPrices();
         shopsPrices.remove(shopPrice);
-        shopPriceService.deleteTheSameShopPrice(shopPrice);
         shopsPrices.add(shopPrice);
+        shopPriceService.deleteShopPriceByProductIdAndShop(shopPrice.getProduct().getId(), shopPrice.getShop());
         productService.updateProduct(product);
+        log.debug("Managing result for {} done!", result);
     }
 
     private ShopPrice createShopPrice(JobResult result, Product product) {

@@ -5,7 +5,6 @@ import com.prem.priceparser.domain.entity.User;
 import com.prem.priceparser.domain.enums.ScheduleType;
 import org.springframework.data.repository.CrudRepository;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 

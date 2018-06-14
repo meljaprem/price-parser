@@ -3,9 +3,7 @@ package com.prem.priceparser.controllers.rest;
 
 import com.prem.priceparser.domain.dto.ProductDto;
 import com.prem.priceparser.domain.entity.Product;
-import com.prem.priceparser.domain.entity.Role;
 import com.prem.priceparser.domain.entity.User;
-import com.prem.priceparser.domain.enums.RoleEnum;
 import com.prem.priceparser.domain.enums.ScheduleType;
 import com.prem.priceparser.domain.enums.ShopName;
 import com.prem.priceparser.mappers.ProductMapper;
@@ -19,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/product")

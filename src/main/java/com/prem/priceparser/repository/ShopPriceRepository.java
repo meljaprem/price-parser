@@ -18,7 +18,5 @@ public interface ShopPriceRepository extends CrudRepository<ShopPrice, Long> {
 
     Set<ShopPrice> findAllByProductId(Long productId);
 
-    @Modifying
-    @Transactional
     long deleteByProductIdAndShop(Long productId, ShopName shopName);
 }

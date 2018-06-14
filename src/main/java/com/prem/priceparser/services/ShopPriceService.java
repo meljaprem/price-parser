@@ -1,6 +1,5 @@
 package com.prem.priceparser.services;
 
-import com.prem.priceparser.domain.entity.ShopPrice;
 import com.prem.priceparser.domain.enums.ShopName;
 import com.prem.priceparser.repository.ShopPriceRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,17 +21,10 @@ public class ShopPriceService {
 
     private final ShopPriceRepository shopPriceRepository;
 
-    @Transactional
+    @Transactional(value = Transactional.TxType.REQUIRES_NEW)
     public void deleteShopPriceByProductIdAndShop(Long productId, ShopName shopName) {
         log.trace("Deleting shopPrice with productId {} and shop {}", productId, shopName);
-        long l = shopPriceRepository.deleteByProductIdAndShop(productId, shopName);
-        log.trace("deleted {} items", l);
-        log.trace("ShopPrice with productId {} and shop {} DELETED!", productId, shopName);
-    }
-
-
-    @Transactional
-    public void deleteTheSameShopPrice(ShopPrice shopPrice) {
-        deleteShopPriceByProductIdAndShop(shopPrice.getProduct().getId(), shopPrice.getShop());
+        long deleted = shopPriceRepository.deleteByProductIdAndShop(productId, shopName);
+        log.trace("Deleted {} with productId {} and shop {}", deleted, productId, shopName);
     }
 }
