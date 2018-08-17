@@ -9,6 +9,7 @@ import com.prem.priceparser.services.pricecheckers.qualifiers.ComfyChecker;
 import com.prem.priceparser.services.pricecheckers.qualifiers.RozetkaChecker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -30,6 +31,7 @@ public class JobManager {
     private final PriceChecker comfyPriceChecker;
     private final RabbitMqSender<JobResult> outboundSender;
 
+    @Async
     public void executeRozetkaJob(Job job) {
         log.debug("Executing job Rozetka for product id: {}", job.getProductId());
         Double price = rozetkaPriceChecker.getPrice(job.getCode());
@@ -38,6 +40,7 @@ public class JobManager {
         log.debug("Job Rozetka for product id {} successfully executed", job.getProductId());
     }
 
+    @Async
     public void executeComfyJob(Job job) {
         log.debug("Executing job Comfy with product id: {}", job.getProductId());
         Double price = comfyPriceChecker.getPrice(job.getCode());

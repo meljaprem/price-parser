@@ -22,7 +22,7 @@ public class OutboundConsumer {
     private final JobResultManager manager;
 
     @RabbitListener(queues = "${outbound.queue.results}")
-    public void receiveInboundRozetka(JobResult result) {
+    public void receiveOutbound(JobResult result) {
         log.debug("Job results received: {}", result);
         manager.parseResult(result);
     }

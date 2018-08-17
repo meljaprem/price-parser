@@ -30,7 +30,7 @@ public class InboundRabbitMqSender extends RabbitMqSender<Job> {
     }
 
     /**
-     * Using InboundRabbitSenderAspect to set shopname at ThreadLocal variable
+     * Using InboundRabbitSenderAspect to set shopname to ThreadLocal variable
      **/
     @Override
     public void sendJobToQueue(Job job) {
