@@ -13,6 +13,11 @@ public class GenericBusinessException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
+    public GenericBusinessException(ExceptionErrorCode errorCode, String message) {
+        super(message);
+        this.errorCode = errorCode;
+    }
+
     public GenericBusinessException(ExceptionErrorCode errorCode, Throwable throwable) {
         super(errorCode.getErrorMessage(), throwable);
         this.errorCode = errorCode;

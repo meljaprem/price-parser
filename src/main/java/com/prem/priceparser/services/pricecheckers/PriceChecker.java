@@ -1,5 +1,7 @@
 package com.prem.priceparser.services.pricecheckers;
 
+import com.prem.priceparser.exceptions.ExceptionErrorCode;
+import com.prem.priceparser.exceptions.GenericBusinessException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +44,10 @@ public abstract class PriceChecker {
         Document document = getDocument(productCode)
                 .orElseThrow(IllegalStateException::new);
         Double price = parseDocument(document);
-        log.debug("Parsed price: {}, shopAddress: {}", price, getShopAddress());
+        if (price == null) {
+            throw new GenericBusinessException(ExceptionErrorCode.FAILED_TO_CHECK_PRICE, ExceptionErrorCode.FAILED_TO_CHECK_PRICE.getErrorMessage() + ", address: " + getShopAddress() + productCode);
+        }
+        log.debug("Parsed price: {}, shopAddress: {}", price, getShopAddress() + productCode);
         return price;
     }
 

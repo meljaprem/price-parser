@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -39,10 +40,15 @@ public class ComfyPriceChecker extends PriceChecker {
 
     @Override
     protected Double parseDocument(Document document) {
-        log.debug("Parsing document using cssQuery : {}, attrKey {}", cssQuery, attrKey);
-        return Double.parseDouble(document
-                .selectFirst(cssQuery)
-                .attr(attrKey));
+        log.debug("Parsing document using cssQuery : {}", cssQuery);
+        Element element = document.selectFirst(cssQuery);
+        if(element != null){
+            log.trace("Parsing element using attrKey: {}", attrKey);
+            String strPrice = element.attr(attrKey);
+            return Double.parseDouble(strPrice);
+        }
+        return null;
+
     }
 
 }

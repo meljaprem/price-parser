@@ -32,7 +32,7 @@ public class InboundRabbitSenderAspect {
             if (arg instanceof Job) {
                 Job job = (Job) arg;
                 shopNameHolder.set(job.getShop());
-                log.trace("ShopName was setted");
+                log.trace("ShopName was set");
             }
             point.proceed();
             shopNameHolder.remove();

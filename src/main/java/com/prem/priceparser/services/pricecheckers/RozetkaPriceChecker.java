@@ -5,9 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * @author Melnyk_Dmytro
@@ -26,6 +29,8 @@ public class RozetkaPriceChecker extends PriceChecker {
     private final static String SHOP_WEB_ADDRESS = "https://rozetka.com.ua/offer/";
     @Value("${pattern.rozetka.cssQuery}")
     private String cssQuery;
+    @Value("${pattern.rozetka.cssQuerySales}")
+    private String cssQuerySales;
     @Value("${pattern.rozetka.attrKey}")
     private String attrKey;
 
@@ -39,10 +44,20 @@ public class RozetkaPriceChecker extends PriceChecker {
 
     @Override
     protected Double parseDocument(Document document) {
-        log.debug("Parsing document using cssQuery : {}, attrKey {}", cssQuery, attrKey);
-        return Double.parseDouble(document
-                .selectFirst(cssQuery)
-                .attr(attrKey));
+        Element element;
+        log.debug("Parsing document using cssQuery : {}", cssQuery);
+        element = document.selectFirst(cssQuery);
+        if (element == null) {
+            log.debug("Element is null, trying to parse document using cssQuery : {}", cssQuerySales);
+            element = document.selectFirst(cssQuerySales);
+        }
+        if(element != null){
+            log.trace("Parsing element using attrKey: {}", attrKey);
+            String strPrice = element.attr(attrKey);
+            return Double.parseDouble(strPrice);
+        }
+
+        return null;
     }
 
 }
