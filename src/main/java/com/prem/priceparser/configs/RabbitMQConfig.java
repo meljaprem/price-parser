@@ -23,6 +23,8 @@ public class RabbitMQConfig {
     private String inboundRozetkaQueueName;
     @Value("${inbound.queue.comfy}")
     private String inboundComfyQueueName;
+    @Value("${inbound.queue.citrus}")
+    private String inboundCitrusQueueName;
 
     @Value("${outbound.exchange}")
     private String outboundExchangeName;
@@ -32,6 +34,11 @@ public class RabbitMQConfig {
     @Bean(name = "inboundRozetkaQueue")
     public Queue inboundRozetkaQueue() {
         return new Queue(inboundRozetkaQueueName);
+    }
+
+    @Bean(name = "inboundCitrusQueue")
+    public Queue inboundCitrusQueue() {
+        return new Queue(inboundCitrusQueueName);
     }
 
     @Bean(name = "inboundComfyQueue")
@@ -68,6 +75,13 @@ public class RabbitMQConfig {
                                @Qualifier("inboundExchange") HeadersExchange exchange) {
 
         return BindingBuilder.bind(queue).to(exchange).where("shop").matches(ShopName.COMFY.name());
+    }
+
+    @Bean("inboundCitrusRouting")
+    Binding bindInboundCitrus(@Qualifier("inboundCitrusQueue") Queue queue,
+                               @Qualifier("inboundExchange") HeadersExchange exchange) {
+
+        return BindingBuilder.bind(queue).to(exchange).where("shop").matches(ShopName.CITRUS.name());
     }
 
     @Bean("outboundResultsRouting")

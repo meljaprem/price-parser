@@ -5,6 +5,7 @@ import com.prem.priceparser.domain.JobResult;
 import com.prem.priceparser.domain.enums.ShopName;
 import com.prem.priceparser.rabbitmq.senders.RabbitMqSender;
 import com.prem.priceparser.services.pricecheckers.PriceChecker;
+import com.prem.priceparser.services.pricecheckers.qualifiers.CitrusChecker;
 import com.prem.priceparser.services.pricecheckers.qualifiers.ComfyChecker;
 import com.prem.priceparser.services.pricecheckers.qualifiers.RozetkaChecker;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,8 @@ public class JobManager {
     private final PriceChecker rozetkaPriceChecker;
     @ComfyChecker
     private final PriceChecker comfyPriceChecker;
+    @CitrusChecker
+    private final PriceChecker citrusPriceChecker;
     private final RabbitMqSender<JobResult> outboundSender;
 
     @Async
@@ -47,6 +50,15 @@ public class JobManager {
         JobResult jobResult = buildJobResult(job, price, ShopName.COMFY);
         outboundSender.sendJobToQueue(jobResult);
         log.debug("Job Rozetka for product id {} successfully executed", job.getProductId());
+    }
+
+    @Async
+    public void executeCitrusJob(Job job) {
+        log.debug("Executing job Citrus with product id: {}", job.getProductId());
+        Double price = citrusPriceChecker.getPrice(job.getCode());
+        JobResult jobResult = buildJobResult(job, price, ShopName.CITRUS);
+        outboundSender.sendJobToQueue(jobResult);
+        log.debug("Job Citrus for product id {} successfully executed", job.getProductId());
     }
 
     private JobResult buildJobResult(Job job, Double price, ShopName shop) {

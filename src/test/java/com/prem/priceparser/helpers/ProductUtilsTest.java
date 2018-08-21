@@ -52,20 +52,23 @@ public class ProductUtilsTest {
 
 
     @Test
-    @Ignore
     public void rozetkaPriceCheckerTest2() throws IOException {
 
-        String code = "p18843076";
-        String cssQuery = "span.detail-price-uah meta[itemprop=\"price\"]";
+        String code = "smartfony/p20-black-huawei-626477.html";
+        String cssQuery = "span.buy-general span.price-number";
         String attrKey = "content";
-        Document doc = Jsoup.connect("https://rozetka.com.ua/offer/" + code).followRedirects(true).get();
+        Document doc = Jsoup.connect("https://www.citrus.ua/" + code)
+                .followRedirects(true)
+//                .header("user-agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Mobile Safari/537.36")
+                .get();
         if (doc != null) {
-//            log.trace("Document which downloaded:\n {}", doc.body());
+            log.trace("Document which downloaded:\n {}", doc.body());
             Element element = doc.selectFirst(cssQuery);
             if (element != null) {
                 log.trace("Element which downloaded:\n {}", element.toString());
-                String attr = element.attr(attrKey);
-                log.debug("Price: " + attr);
+                String attr = element.text();
+//                String attr = element.attr(attrKey);
+                log.debug("Price: " + attr.replaceAll(" ", ""));
             } else {
                 log.error("Element is null!");
             }

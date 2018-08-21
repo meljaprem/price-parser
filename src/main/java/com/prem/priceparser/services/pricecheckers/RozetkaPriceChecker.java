@@ -52,7 +52,8 @@ public class RozetkaPriceChecker extends PriceChecker {
             element = document.selectFirst(cssQuerySales);
         }
         if(element != null){
-            log.trace("Parsing element using attrKey: {}", attrKey);
+            log.trace("Element with price: {}", element.toString());
+            log.debug("Parsing element using attrKey: {}", attrKey);
             String strPrice = element.attr(attrKey);
             return Double.parseDouble(strPrice);
         }

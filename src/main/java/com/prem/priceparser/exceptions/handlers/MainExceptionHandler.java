@@ -26,6 +26,12 @@ public class MainExceptionHandler {
         return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> illegalArgumentExceptionHandler(IllegalArgumentException ex) {
+        log.error("Invalid parameters in request were sent ", ex);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> allExceptionsHandler(Exception ex) {
             log.error("Unexpected error, more info: ");

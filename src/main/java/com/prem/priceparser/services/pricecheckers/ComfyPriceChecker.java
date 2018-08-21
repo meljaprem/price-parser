@@ -43,7 +43,8 @@ public class ComfyPriceChecker extends PriceChecker {
         log.debug("Parsing document using cssQuery : {}", cssQuery);
         Element element = document.selectFirst(cssQuery);
         if(element != null){
-            log.trace("Parsing element using attrKey: {}", attrKey);
+            log.trace("Element with price: {}", element.toString());
+            log.debug("Parsing element using attrKey: {}", attrKey);
             String strPrice = element.attr(attrKey);
             return Double.parseDouble(strPrice);
         }

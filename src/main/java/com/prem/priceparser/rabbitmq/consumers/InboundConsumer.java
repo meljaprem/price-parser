@@ -33,4 +33,10 @@ public class InboundConsumer {
         log.debug("Comfy job received: {}", job);
         jobManager.executeComfyJob(job);
     }
+
+    @RabbitListener(queues = "${inbound.queue.citrus}")
+    public void receiveInboundCitrus(Job job) {
+        log.debug("Citrus job received: {}", job);
+        jobManager.executeCitrusJob(job);
+    }
 }
