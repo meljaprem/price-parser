@@ -2,6 +2,7 @@ package com.prem.priceparser.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.prem.priceparser.domain.enums.RoleEnum;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -15,6 +16,7 @@ import java.util.Collection;
 @ToString(exclude = "users")
 @NoArgsConstructor
 @Table(name = "roles")
+@Data
 public class Role implements GrantedAuthority {
 
     public Role(RoleEnum role) {
